@@ -1,0 +1,406 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{ctex}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tocloft}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\renewcommand{\contentsname}{目录}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\LARGE 驾驶员危险行为检测系统需求说明书}
+\end{center}
+
+\section*{版本信息}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        & \textbf{人员} & \textbf{时间} & \textbf{备注} \\
+        \hline
+        \textbf{编写} & 加鹿鸣 & 2025.9.17 & \\
+        \hline
+        \textbf{审核} & 肖弘基 & 2025.9.18 & \\
+        \hline
+        & & & \\
+        \hline
+        & & & \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\tableofcontents
+\newpage
+
+\section{前言}
+
+\subsection{编写目的}
+% Describing the purpose of the document
+本文档的编写旨在为驾驶员危险行为检测系统的设计文档和测试文档提供坚实基础，详细叙述了系统的任务概述、需求规定和运行环境规定。作为软件体系结构课程小组作业的核心文档，本说明书将指导后续的系统架构设计、实现和验证工作，确保系统开发符合用户需求和质量标准。
+
+\subsection{背景}
+% Providing background information
+\begin{itemize}
+    \item \textbf{待开发软件系统名称}：驾驶员危险行为检测系统
+    \item \textbf{任务提出者}：陈长清
+    \item \textbf{开发者}：加鹿鸣，肖弘基
+    \item \textbf{目标用户}：个人驾驶员、车队管理人员、交通监管部门，以及相关安全研究机构
+\end{itemize}
+
+\subsection{定义}
+% Specifying definitions
+本文档中无特殊定义。
+
+\subsection{参考资料}
+% Listing reference materials
+\begin{enumerate}
+    \item 《软件工程导论》（第6版，清华大学出版社）
+    \item 《软件体系结构原理、方法与实践》（机械工业出版社）
+    \item 《GB/T 8567-2006 计算机软件文档编制规范》
+    \item 《IEEE Std 830-1998 软件需求规格说明标准》
+    \item 现有驾驶辅助系统（ADAS）相关技术文档，如Tesla Autopilot和Mobileye系统案例
+    \item 《数据库系统概论》（高等教育出版社）
+\end{enumerate}
+
+\section{任务概述}
+
+\subsection{目标}
+% Outlining the system objectives
+随着汽车保有量的持续增长，交通安全问题日益严峻。驾驶员的疲劳、分心等危险行为是导致交通事故的主要原因之一。为了有效减少此类事故，提高道路交通安全水平，拟开发一个能够实时监测、识别并预警驾驶员危险行为的系统。本系统旨在通过计算机视觉和传感器技术，实现对驾驶员状态的实时监控，并在发现危险行为时及时发出警报，从而辅助驾驶员安全驾驶或为车队管理者提供数据支持。
+
+\subsection{用户特点}
+% Describing user characteristics
+\begin{itemize}
+    \item \textbf{最终用户}：个人驾驶员、出租车/网约车管理方、交通监管人员
+    \item \textbf{教育水平}：不限，具备基本的智能设备操作能力即可
+    \item \textbf{使用频率}：车辆行驶期间持续运行，用户交互主要集中在系统设置、警报响应和后台数据查询阶段；高峰期为长途驾驶或夜间行驶时段
+\end{itemize}
+
+\subsection{假定和约束}
+% Listing assumptions and constraints
+\begin{itemize}
+    \item \textbf{开发时间}：1 个月
+    \item \textbf{开发经费}：无
+    \item \textbf{开发人员}：在校学生，开发时间受课业影响
+\end{itemize}
+
+\section{需求规定}
+
+\subsection{功能描述}
+% Introducing functional requirements
+本系统主要包括：\textbf{危险行为实时监测与报警功能}、\textbf{用户账户管理功能}、\textbf{历史数据统计与展示功能}以及\textbf{设备管理功能}四大模块。各功能模块下又相应地按业务需要分成若干个子功能模块。各模块通过用例描述方式详细说明，包括用例名称、简要描述、事件流（基本事件流和备选事件流）、特殊需求、前置条件和后置条件。
+
+\subsubsection{危险行为实时监测与报警功能模块}
+% Detailing real-time monitoring and alerting functions
+
+\textbf{1. 危险行为识别用例}
+\begin{itemize}
+    \item \textbf{用例名称}：危险行为识别
+    \item \textbf{简要描述}：系统通过摄像头实时捕捉驾驶员面部和上半身动作，识别疲劳（打哈欠、闭眼）、分心（低头看手机、视线偏离）、手部异常（离开方向盘、抽烟、打电话）等危险行为。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 系统启动后，摄像头开始采集驾驶员的实时视频流。
+            \item 系统对视频帧进行预处理，定位驾驶员面部关键点和手部位置。
+            \item 通过内置的算法模型，实时分析驾驶员的眼部开合度、头部姿态、视线方向及手部动作。
+            \item 当检测到符合预设危险行为（如长时间闭眼、视线持续偏离前方）的特征时，触发报警机制，并记录该事件。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若光照条件差，系统自动切换到红外模式；若检测失败，提供重试提示。
+    \end{itemize}
+    \item \textbf{特殊需求}：算法模型需要具备在不同光照条件（白天、夜晚、隧道内）下的鲁棒性。
+    \item \textbf{前置条件}：摄像头和计算单元正常运行，系统已初始化。
+    \item \textbf{后置条件}：成功识别危险行为后，将行为类型和时间戳信息传递给报警模块和数据记录模块。
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/dangerous_behavior_detection.png}
+    \caption{危险行为识别流程图}
+    \label{fig:dangerous_behavior_detection}
+\end{figure}
+
+\textbf{2. 实时报警用例}
+\begin{itemize}
+    \item \textbf{用例名称}：实时报警
+    \item \textbf{简要描述}：当系统识别到危险行为时，能通过声音、视觉或震动等多模态方式向驾驶员发出即时警报。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 报警模块接收到危险行为识别模块传递的信号。
+            \item 根据危险行为的严重等级和用户预设的报警方式，触发相应的警报。例如，对于疲劳驾驶，系统发出“请保持清醒”的语音提示，并伴有警示图标在屏幕上闪烁。
+            \item 警报持续直到行为纠正或手动关闭。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若驾驶员未响应，升级警报强度或通知远程管理者。
+    \end{itemize}
+    \item \textbf{特殊需求}：报警方式（声音、音量、震动强度）应可由用户自定义。
+    \item \textbf{前置条件}：系统已识别出危险驾驶行为。
+    \item \textbf{后置条件}：驾驶员接收到警报信息，警报记录存入数据库。
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/real_time_alert.png}
+    \caption{实时报警流程图}
+    \label{fig:real_time_alert}
+\end{figure}
+
+\subsubsection{用户账户管理系统功能模块}
+% Detailing user account management functions
+
+\textbf{1. 用户登录用例}
+\begin{itemize}
+    \item \textbf{用例名称}：用户登录
+    \item \textbf{简要描述}：用户（车队管理员）通过输入正确的账号和密码登录管理后台。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 用户打开后台管理页面或App，进入登录界面。
+            \item 用户输入账户和密码。
+            \item 系统验证账户和密码的正确性。
+            \item 验证通过，登录成功，进入系统主界面。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若用户输入的账号或密码错误，或输入不完整，系统应给出相应的错误提示。
+    \end{itemize}
+    \item \textbf{特殊需求}：可提供“记住密码”和“忘记密码”选项，提供验证码辅助登录。
+    \item \textbf{前置条件}：网络连接正常，服务器和数据库正常连接。
+    \item \textbf{后置条件}：登录成功后，系统根据用户角色（如管理员、普通用户）展示相应的功能和数据权限。
+\end{itemize}
+
+\textbf{2. 密码找回用例}
+\begin{itemize}
+    \item \textbf{用例名称}：密码找回
+    \item \textbf{简要描述}：当用户忘记密码时，可以通过预留的手机号或邮箱找回密码。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 用户在登录界面点击“忘记密码”按钮。
+            \item 系统引导用户进入密码找回页面，要求输入注册时使用的手机号或邮箱。
+            \item 系统向该手机号或邮箱发送验证码。
+            \item 用户输入收到的验证码进行验证。
+            \item 验证通过后，用户可以设置新的密码，两次新密码一致后更新数据库。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若验证码输入错误或超时，系统应提示用户重新获取。
+    \end{itemize}
+    \item \textbf{特殊需求}：密码复杂度要求（包含字母、数字、符号）。
+    \item \textbf{前置条件}：网络连接正常，短信或邮件服务接口可用。
+    \item \textbf{后置条件}：用户密码在数据库中被更新。
+\end{itemize}
+
+\textbf{3. 密码修改用例}
+\begin{itemize}
+    \item \textbf{用例名称}：密码修改
+    \item \textbf{简要描述}：登录后基于原密码修改新密码。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 用户在登录界面点击“修改密码”进入修改界面。
+            \item 输入原密码和两次新密码。
+            \item 验证一致性后更新数据库。
+        \end{enumerate}
+        \item \textbf{备选事件流}：两次新密码不一致时，提供提示。
+    \end{itemize}
+    \item \textbf{特殊需求}：密码复杂度要求（包含字母、数字、符号）。
+    \item \textbf{前置条件}：用户已登录。
+    \item \textbf{后置条件}：数据库密码记录更新。
+\end{itemize}
+
+\subsubsection{历史数据统计与展示功能模块}
+% Detailing historical data statistics and display functions
+
+\textbf{1. 危险行为历史查询用例}
+\begin{itemize}
+    \item \textbf{用例名称}：危险行为历史查询
+    \item \textbf{简要描述}：管理员可在后台按时间范围、驾驶员、车辆、行为类型等条件筛选查询历史危险行为记录。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 管理员登录后台，进入“历史数据”页面。
+            \item 选择或输入查询条件（如：过去7天，驾驶员张三，疲劳驾驶）。
+            \item 点击“查询”按钮，系统从数据库中检索匹配的记录。
+            \item 系统以列表形式展示查询结果，包括时间、地点、驾驶员、行为类型、抓拍照片或短视频等信息。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若查询无结果，系统应提示“未找到相关记录”。
+    \end{itemize}
+    \item \textbf{特殊需求}：查询结果支持按时间或行为类型排序。
+    \item \textbf{前置条件}：用户已成功登录后台管理系统，并拥有数据查询权限。
+    \item \textbf{后置条件}：无。
+\end{itemize}
+
+\textbf{2. 数据统计与可视化用例}
+\begin{itemize}
+    \item \textbf{用例名称}：数据统计与可视化
+    \item \textbf{简要描述}：系统能将历史数据以图表形式（如折线图、饼图、柱状图）进行可视化展示，帮助管理员直观分析趋势。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 管理员在“统计报表”页面选择要分析的维度（如：驾驶员危险行为次数排行、团队危险行为类型分布、特定时间段内危险行为发生趋势）。
+            \item 系统自动聚合分析相关数据。
+            \item 将分析结果生成对应的图表并展示在页面上。
+        \end{enumerate}
+        \item \textbf{备选事件流}：无。
+    \end{itemize}
+    \item \textbf{特殊需求}：报表图表支持导出为图片或PDF文件。
+    \item \textbf{前置条件}：用户已成功登录后台管理系统。
+    \item \textbf{后置条件}：无。
+\end{itemize}
+
+\subsubsection{设备管理功能模块}
+% Detailing equipment management functions
+
+\textbf{1. 设备状态监控用例}
+\begin{itemize}
+    \item \textbf{用例名称}：设备状态监控
+    \item \textbf{简要描述}：管理员可在后台实时查看车队中所有终端设备的在线状态、网络信号、存储空间等信息。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 管理员登录后台，进入“设备管理”页面。
+            \item 页面以列表形式展示所有已注册的设备及其关键状态信息（如：设备ID、绑定车辆、在线/离线、GPS信号强度）。
+            \item 设备状态信息定时自动刷新。
+        \end{enumerate}
+        \item \textbf{备选事件流}：当设备离线超过预设时长，系统可将该设备标记为异常状态（如红色高亮显示），并向管理员发送通知。
+    \end{itemize}
+    \item \textbf{特殊需求}：支持按设备状态（在线/离线/异常）进行筛选。
+    \item \textbf{前置条件}：用户已成功登录后台管理系统。
+    \item \textbf{后置条件}：无。
+\end{itemize}
+
+\textbf{2. 远程配置与升级用例}
+\begin{itemize}
+    \item \textbf{用例名称}：远程配置与升级
+    \item \textbf{简要描述}：管理员可远程修改单个或批量设备的参数（如：报警灵敏度、视频录制时长），并进行固件或算法模型的远程升级。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 管理员在“设备管理”页面选择一个或多个设备。
+            \item 点击“远程配置”或“远程升级”按钮。
+            \item 在弹出的窗口中修改配置参数或上传新的升级包。
+            \item 系统向目标设备下发指令。设备在下一次心跳连接时接收并执行指令。
+            \item 设备执行完成后，将结果反馈给后台。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若设备执行指令失败，后台应记录失败日志并显示任务失败状态。
+    \end{itemize}
+    \item \textbf{特殊需求}：关键配置的修改和升级操作需要二次密码确认。
+    \item \textbf{前置条件}：用户已成功登录后台，目标设备处于在线状态。
+    \item \textbf{后置条件}：设备的配置或版本得到更新。
+\end{itemize}
+
+
+\subsection{质量指标描述}
+
+\subsubsection{性能}
+% Specifying performance requirements
+\begin{itemize}
+    \item \textbf{响应时间}：
+    \begin{itemize}
+        \item 从摄像头捕捉到危险行为到系统发出首次警报的平均延迟应低于500毫秒。
+        \item 后台管理系统查询和生成驾驶报告的响应时间，在数据量为百万级时，应在5秒以内。
+    \end{itemize}
+    \item \textbf{资源占用}：
+    \begin{itemize}
+        \item 系统在车载设备上运行时，CPU占用率应不高于70\%，内存占用应不高于500MB，以保证不影响车辆其他系统的正常运行。
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{安全性}
+% Specifying security requirements
+\begin{itemize}
+    \item \textbf{数据加密}：用户的个人信息、驾驶行为数据在传输和存储过程中必须进行加密处理，防止数据泄露。
+    \item \textbf{防御攻击}：后台管理系统应能有效防止常见的网络攻击，如SQL注入、跨站脚本（XSS）攻击，至少能阻断90%的此类攻击。
+    \item \textbf{病毒检测}：系统具备病毒检测程序，能够阻止并查杀95\%的病毒，保护系统数据安全。
+\end{itemize}
+
+\subsubsection{易用性}
+% Specifying usability requirements
+\begin{itemize}
+    \item \textbf{操作提示}：系统界面应简洁直观，关键操作有明确的提示信息，使得驾驶员和管理员能快速理解并使用。
+    \item \textbf{界面一致性}：系统的移动端App与后台管理界面的设计风格应保持一致，提供统一的用户体验。
+\end{itemize}
+
+\subsection{输入输出要求}
+% Specifying input and output requirements
+\begin{itemize}
+    \item \textbf{输入要求}：
+    \begin{itemize}
+        \item \textbf{视频输入}：系统接收来自摄像头的实时视频流，分辨率不低于720p，帧率不低于25fps。
+        \item \textbf{用户输入}：用户注册时，密码必须包含字母和数字，长度不少于8位。
+    \end{itemize}
+    \item \textbf{输出要求}：
+    \begin{itemize}
+        \item \textbf{警报输出}：警报信息以语音、高亮图标等形式清晰地输出。
+        \item \textbf{报告输出}：后台生成的驾驶行为分析报告应支持导出为PDF或Excel格式。
+    \end{itemize}
+\end{itemize}
+
+\subsection{数据管理能力要求}
+% Specifying data management requirements
+系统应提供对历史驾驶数据的备份和恢复功能。车队管理员可以在后台手动或设定自动备份策略，以确保数据的安全可靠。数据保留周期应可配置，默认为180天。
+
+\subsection{故障处理要求}
+% Specifying fault handling requirements
+当摄像头硬件故障或算法模块发生异常时，系统应能自动检测并尝试重启相关服务。若无法恢复，需在界面上给出明确的故障提示，并记录错误日志及上报至后台管理系统。
+
+\subsection{其他专门要求}
+% Specifying additional requirements
+\begin{itemize}
+    \item \textbf{可扩展性}：
+    \begin{itemize}
+        \item 系统采用模块化设计，未来可方便地增加新的危险行为识别类型（如抽烟、打电话）或集成新的传感器（如酒精检测仪）。
+        \item 算法模型应支持在线或离线更新，以持续提升识别准确率。
+    \end{itemize}
+    \item \textbf{可移植性}：
+    \begin{itemize}
+        \item 核心算法模块应具备良好的可移植性，能够部署在不同的硬件平台（如ARM、x86）和操作系统（如Linux、Android）上。
+    \end{itemize}
+\end{itemize}
+
+\section{运行环境规定}
+
+\subsection{设备}
+% Specifying hardware requirements
+\begin{itemize}
+    \item \textbf{前端设备（车载）}：
+    \begin{itemize}
+        \item 一个普通摄像头（720p，25fps，支持USB接口或网络流输入，如电脑摄像头或手机摄像头通过Wi-Fi传输），用于捕捉驾驶员行为。
+        \item 计算设备：普通PC或笔记本（推荐4核CPU，8GB内存，运行Windows/macOS/Linux，执行Flask后端和YOLOv11推理），或中高端手机（Android 10+或iOS 15+，4GB+ RAM，作为摄像头或运行浏览器/应用前端）。
+        \item 显示设备：PC屏幕（Linux/Windows/macOS）或手机屏幕（浏览器或应用），用于显示Vue.js Web界面；扬声器用于语音报警。
+    \end{itemize}
+    \item \textbf{后端设备}：
+    \begin{itemize}
+        \item 云服务器，用于数据存储、后台管理和数据分析。
+    \end{itemize}
+\end{itemize}
+
+\subsection{支持软件}
+% Specifying software requirements
+\begin{itemize}
+    \item \textbf{前端操作系统}：Windows、macOS、Linux（如Ubuntu 22.04），或Android/iOS（通过浏览器或Capacitor应用）。
+    \item \textbf{后端服务器}：Linux（如CentOS 7）。
+    \item \textbf{数据库}：MySQL 或 PostgreSQL。
+    \item \textbf{开发框架}：Python + OpenCV（视频处理） + YOLOv11（目标检测，基于PyTorch，支持ONNX/TFLite优化） + MediaPipe（关键点检测，可选） + Flask（后端服务器） + Vue.js和Vuetify（前端Web界面，支持Capacitor打包） + flask-socketio（实时通信） + pygame/playsound（语音报警） + PyInstaller（Windows/Linux打包）。
+\end{itemize}
+
+\subsection{接口}
+% Specifying interface requirements
+\begin{itemize}
+    \item \textbf{硬件接口}：系统需支持通过USB或CSI接口连接摄像头。
+    \item \textbf{软件接口}：系统通过RESTful API与后端服务器进行数据交互。内部模块间通过定义好的函数接口进行调用和数据传递。
+\end{itemize}
+
+\end{document}
