@@ -1,35 +1,149 @@
-# 人物专注性检测
+# SafePilot - 驾驶员危险行为检测系统
 
-## 项目快速预览
+SafePilot是一个基于计算机视觉的实时驾驶员危险行为检测系统，可以检测包括疲劳驾驶（闭眼、打哈欠）、分心（使用手机、抽烟、喝水）等危险行为，并提供实时声光报警和数据分析功能。系统采用三层架构，包括客户端检测程序、服务器后端和Web管理界面。
 
-![快速预览](images/1620298460804.gif?raw=true"快速预览")
-## 1.0版本
-在征得原作者的同意之后，进行了部分修改，得到V1.0版本
+## 系统架构
 
-主要不同地方为：
+系统采用复合架构风格：
+- **三层架构**：表现层、逻辑层和数据层清晰分离
+- **客户端-服务器架构**：胖客户端进行实时检测，服务器进行数据管理和分析
 
-1、疲劳检测中去掉了点头行为的检测，仅保留闭眼检测和打哈欠检测。
+### 核心组件
 
-2、Yolov5的权重进行了重新训练，增加了训练轮次。
+1. **客户端** (`client/`)：
+   - 实时视频流采集和处理
+   - 基于YOLOv11和MediaPipe的行为检测
+   - 本地声光报警
+   - 事件数据上报
 
-3、前端UI进行了修改，精简了部分功能。
+2. **服务器** (`server/`)：
+   - Flask API服务
+   - 数据访问层（DAO模式）
+   - 用户和设备管理
+   - 事件数据存储和统计分析
 
-## 项目介绍
-该项目为人物专注性检测，分为两个检测部分，疲劳检测和分心行为检测。
-疲劳检测部分，使用Dlib进行人脸关键点检测，然后通过计算眼睛和嘴巴的开合程度来判断是存在否闭眼或者打哈欠，并使用Perclos模型计算疲劳程度。
-分心行为检测部分，使用Yolov5，检测是否存在玩手机、抽烟、喝水这三种行为。
+3. **前端** (`frontend/`)：
+   - 基于Vue.js的管理界面
+   - 实时数据展示
+   - 历史数据查询和分析
 
-## 使用方法
-依赖：YoloV5、Dlib、PySide2
+## 技术栈
 
-直接运行main.py，即可使用本程序，具体效果可以观看演示视频。
+- **计算机视觉**：YOLOv11, MediaPipe, OpenCV
+- **后端**：Python, Flask, SQLAlchemy
+- **数据库**：SQLite/PostgreSQL
+- **前端**：Vue.js, Chart.js
 
-[bilibili在线观看](https://www.bilibili.com/video/BV1MK4y1d7a8/)
+## 安装指南
 
-各函数的信息，均在代码中写好了注释，如有疑问请联系1647790440@qq.com
+### 系统要求
+
+- Python 3.8+
+- CUDA (可选，用于GPU加速)
+- PostgreSQL (可选，默认使用SQLite)
+
+### 安装依赖
+
+1. 客户端依赖：
+
+```bash
+pip install -r client_requirements.txt
+```
+
+2. 服务器依赖：
+
+```bash
+pip install -r server_requirements.txt
+```
+
+### 配置
+
+1. 客户端配置：
+   - 编辑 `config.json` 配置服务器地址、设备ID等
+
+2. 服务器配置：
+   - 编辑 `server_config.json` 配置数据库连接、API参数等
+
+## 使用说明
+
+### 运行客户端
+
+```bash
+# 默认使用摄像头
+python run_client.py
+
+# 使用指定摄像头
+python run_client.py --camera 1
+
+# 使用视频文件
+python run_client.py --video path/to/video.mp4
+
+# 指定YOLO模型
+python run_client.py --model weights/custom_model.pt
+
+# 启用数据上报
+python run_client.py --upload --server http://your_server:5000
+```
+
+### 运行服务器
+
+```bash
+# 默认配置运行
+python run_server.py
+
+# 指定端口
+python run_server.py --port 8080
+
+# 使用PostgreSQL
+python run_server.py --db postgresql --db-name safepilot --db-user postgres --db-password secret
+
+# 仅初始化数据库
+python run_server.py --init-db
+```
+
+## 检测功能
+
+系统可以检测以下驾驶员行为：
+
+1. **疲劳状态**：
+   - 闭眼（实时跟踪眼睛状态）
+   - 打哈欠（检测口部开合度）
+   - 基于PERCLOS模型的疲劳评估
+
+2. **分心行为**：
+   - 使用手机
+   - 抽烟
+   - 喝水
+
+3. **注意力跟踪**：
+   - 视线跟踪
+   - 头部姿态分析
+
+## API文档
+
+服务器提供RESTful API：
+
+- **认证**：`/api/v1/auth/login`, `/api/v1/auth/register`
+- **设备管理**：`/api/v1/devices`
+- **驾驶员管理**：`/api/v1/drivers`
+- **事件数据**：`/api/v1/events`
+- **统计分析**：`/api/v1/stats`
+
+详细API文档请参考 `docs/API.md`。
+
+## 系统截图
+
+[这里放置系统运行截图]
+
+## 许可证
+
+本项目采用 MIT 许可证，详情请参阅 LICENSE 文件。
 
 ## 致谢
-十分感谢原作者的支持和帮助，本项目很大部分都基于源项目，项目所使用的数据集也由原作者提
 
-供。
-
+- YOLOv11 by Ultralytics
+- MediaPipe by Google
+- OpenCV
+- Flask
+- SQLAlchemy
+- PySide2
