@@ -1,4 +1,12 @@
-# SafePilot - 驾驶员危险行为检测系统
+<div align="center">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin: 20px 0;">
+    <img src="figures/logo.png" alt="SafePilot Logo" width="90" height="90" style="flex-shrink: 0;">
+    <div style="text-align: left;">
+      <h1 style="margin: 0; padding: 0;">SafePilot：驾驶员危险行为检测系统</h1>
+      <p style="margin: 5px 0 0 0; padding: 0; color: #666;">基于YOLOv11和MediaPipe的智能驾驶安全监控系统</p>
+    </div>
+  </div>
+</div>
 
 SafePilot是一个基于计算机视觉的实时驾驶员危险行为检测系统，可以检测包括疲劳驾驶（闭眼、打哈欠）、分心（使用手机、抽烟、喝水）等危险行为，并提供实时声光报警和数据分析功能。系统采用三层架构，包括客户端检测程序、服务器后端和Web管理界面。
 
