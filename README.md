@@ -145,5 +145,3 @@ python run_server.py --init-db
 - MediaPipe by Google
 - OpenCV
 - Flask
-- SQLAlchemy
-- PySide2

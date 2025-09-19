@@ -37,7 +37,6 @@ logs/
 
 # Data files
 data/
-weights/*.pt
 !weights/README.md
 
 # Database
@@ -93,3 +92,7 @@ yarn-error.log
 .env.local
 .env.*.local
 .DS_Store
+
+# cursor
+.specstory/
+.cursorindexingignore
