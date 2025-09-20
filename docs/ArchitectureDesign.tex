@@ -57,9 +57,27 @@
 
 \subsection{通信风格：客户端-服务器架构}
 \begin{itemize}
-  \item \textbf{胖客户端}：执行核心实时监测任务的 \textbf{Python 应用程序}。它在本地完成视频流处理、AI 模型推理和危险行为分析等重计算任务，然后仅将结果（报警事件）发送给服务器。
-  \item \textbf{瘦客户端}：管理员使用的 \textbf{Web 浏览器}。它只负责渲染后端返回的数据和界面，所有业务逻辑均由服务器处理。
-  \item \textbf{服务器}：\textbf{Flask 应用程序} 作为中心服务器，响应来自胖客户端的数据上报请求和来自瘦客户端的数据查询请求。
+  \item \textbf{智能胖客户端（监测端）}：基于Python的实时监测应用程序，具备完整的AI推理能力。
+    \begin{itemize}
+      \item 本地执行YOLO v11目标检测和MediaPipe面部关键点分析
+      \item 实现多策略行为分析算法（EAR、MAR、PERCLOS）
+      \item 提供毫秒级实时报警响应
+      \item 支持离线运行和网络中断容错
+      \item 采用观察者模式实现组件解耦
+    \end{itemize}
+  \item \textbf{轻量瘦客户端（管理端）}：基于Vue.js的Web管理界面。
+    \begin{itemize}
+      \item 纯前端渲染，所有业务逻辑由服务器处理
+      \item 响应式设计，支持多设备访问
+      \item 实时数据展示和交互式图表
+    \end{itemize}
+  \item \textbf{中心服务器}：Flask RESTful API服务器，采用微服务化设计思路。
+    \begin{itemize}
+      \item 事件数据接收与持久化
+      \item 用户认证与权限管理
+      \item 统计分析与报表生成
+      \item 系统监控与健康检查
+    \end{itemize}
 \end{itemize}
 
 \begin{figure}[h]
@@ -72,18 +90,48 @@
 \section{参考模型说明}
 为全面描述系统架构，我们选用 \textbf{4+1 视图模型} 作为理论框架。该模型通过多视角描绘系统，确保利益相关者（如开发者关注模块化、管理员关注可用性）获得针对性信息，避免单一视图的偏差。
 \begin{enumerate}
-  \item \textbf{逻辑视图}：描述系统的功能结构，主要关注系统为用户提供的服务。
-  \item \textbf{过程视图}：描述系统的动态行为，即系统运行时各个进程、线程间的交互和并发。
-  \item \textbf{开发视图}：描述系统的模块划分和组织，即软件在开发环境中的静态结构。
-  \item \textbf{物理视图}：描述系统如何部署到硬件节点上，以及各节点间的物理连接。
-  \item \textbf{场景视图}：作为核心，用于连接和验证其他四个视图，通过具体的用例或场景来展示架构的合理性。
+  \item \textbf{逻辑视图（Logical View）}：描述系统的功能结构，主要关注系统为用户提供的服务和模块间的责任分工。
+  \item \textbf{过程视图（Process View）}：描述系统的动态行为，即系统运行时各个进程、线程间的交互、并发和数据流。
+  \item \textbf{开发视图（Development View）}：描述系统的模块划分和组织，包括代码结构、依赖关系和开发规约。
+  \item \textbf{物理视图（Physical View）}：描述系统如何部署到硬件节点上，以及各节点间的物理连接和网络拓扑。
+  \item \textbf{场景视图（Scenario View）}：作为核心，用于连接和验证其他四个视图，通过具体的用例或场景来展示架构的合理性。
 \end{enumerate}
 
 \section{参考架构分析}
 应用 4+1 视图模型，从多视角剖析系统架构，确保覆盖功能、动态、开发与部署维度。
 
 \subsection{逻辑视图}
-此视图展示了系统的主要功能模块及其关系（见于图2）。
+此视图展示了系统的主要功能模块及其关系，采用分层设计和设计模式组合。
+
+\subsubsection{核心类与接口设计}
+\begin{itemize}
+  \item \textbf{检测层}：
+    \begin{itemize}
+      \item \texttt{YOLODetector}：采用单例模式，封装YOLOv11模型加载与推理
+      \item \texttt{FaceDetector}：基于MediaPipe的面部关键点检测器
+      \item \texttt{DetectorFactory}：工厂模式管理检测器实例创建
+    \end{itemize}
+  \item \textbf{分析层}：
+    \begin{itemize}
+      \item \texttt{BehaviorAnalyzer}：主分析器，採用观察者模式通知多个监听器
+      \item \texttt{BehaviorDetectionStrategy}：策略模式接口，定义行为检测算法
+      \item \texttt{EyeStateStrategy}、\texttt{MouthStateStrategy}、\texttt{DistractionStrategy}：具体策略实现
+    \end{itemize}
+  \item \textbf{响应层}：
+    \begin{itemize}
+      \item \texttt{AlarmManager}：报警管理器，实现\texttt{BehaviorObserver}接口
+      \item \texttt{DataUploader}：数据上传组件，支持批量上传和重试机制
+      \item \texttt{ConfigManager}：配置管理器，采用单例模式
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{设计模式应用关系}
+\begin{itemize}
+  \item \textbf{观察者模式}：\texttt{BehaviorAnalyzer} $\to$ \texttt{AlarmManager}, \texttt{DataUploader}
+  \item \textbf{策略模式}：\texttt{BehaviorAnalyzer} $\to$ \texttt{BehaviorDetectionStrategy} $\to$ 具体策略实现
+  \item \textbf{单例模式}：\texttt{YOLODetector}、\texttt{FaceDetector}、\texttt{ConfigManager}
+  \item \textbf{工厂模式}：\texttt{DetectorFactory} 管理检测器生命周期
+\end{itemize}
 
 \begin{figure}[h]
   \centering
@@ -93,7 +141,56 @@
 \end{figure}
 
 \subsection{过程视图}
-此视图通过一个核心时序图展示“检测到危险行为并上报”的动态过程（见于图3）。
+此视图通过时序图和活动图展示“检测到危险行为并响应”的动态过程。
+
+\subsubsection{主流程时序图}
+以下时序图展示了从视频采集到报警响应的完整流程：
+
+\begin{itemize}
+  \item \textbf{初始化阶段}：
+    \begin{enumerate}
+      \item \texttt{SafePilotApp} 启动并初始化所有组件
+      \item 加载YOLO和MediaPipe模型（单例模式保证只加载一次）
+      \item 注册观察者：\texttt{AlarmManager}和\texttt{DataUploader}
+      \item 初始化视频流\texttt{VideoStreamer}
+    \end{enumerate}
+  \item \textbf{实时检测循环}（在独立线程中运行）：
+    \begin{enumerate}
+      \item 视频帧采集：\texttt{VideoStreamer.read()}
+      \item 图像预处理：\texttt{VideoProcessor.preprocess\_frame()}
+      \item 并行AI推理：
+        \begin{itemize}
+          \item \texttt{YOLODetector.detect()} 检测物体（手机、香烟等）
+          \item \texttt{FaceDetector.detect\_face()} 检测面部关键点
+        \end{itemize}
+      \item 结果合并与格式化
+      \item \texttt{BehaviorAnalyzer.analyze()} 执行多策略行为分析
+    \end{enumerate}
+  \item \textbf{危险行为响应}（观察者模式触发）：
+    \begin{enumerate}
+      \item \texttt{BehaviorAnalyzer} 检测到危险行为后通知所有观察者
+      \item \texttt{AlarmManager.on\_behavior\_detected()}：
+        \begin{itemize}
+          \item 触发声音报警（pygame播放音频）
+          \item 显示视觉报警（OpenCV绘制警告框）
+          \item 保存报警时刻的视频帧
+        \end{itemize}
+      \item \texttt{DataUploader.on\_behavior\_detected()}：
+        \begin{itemize}
+          \item 将事件数据加入本地缓存队列
+          \item 异步批量上传至服务器
+          \item 实现指数退避重试机制
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{并发与线程模型}
+\begin{itemize}
+  \item \textbf{主线程}：用户界面与OpenCV显示
+  \item \textbf{检测线程}：实时AI推理和行为分析
+  \item \textbf{上传线程}：异步数据上传，避免阻塞主流程
+  \item \textbf{线程同步}：使用\texttt{threading.Lock}保证共享数据的线程安全
+\end{itemize}
 
 \begin{figure}[h]
   \centering
@@ -103,7 +200,32 @@
 \end{figure}
 
 \subsection{开发视图}
-此视图展示了项目的代码组织结构（见于图4）。
+此视图展示了项目的代码组织结构（见于图4）和模块依赖关系。
+
+\subsubsection{模块依赖关系}
+\textbf{客户端模块依赖}：
+\begin{itemize}
+  \item \texttt{application.py} $\leftarrow$ 聚合所有组件，作为门面模式（Facade Pattern）
+  \item \texttt{detector.py} $\leftarrow$ \texttt{analyzer.py} （策略模式依赖）
+  \item \texttt{alarm\_manager.py} $\leftarrow$ \texttt{analyzer.py} （观察者模式依赖）
+  \item \texttt{data\_uploader.py} $\leftarrow$ \texttt{analyzer.py} （观察者模式依赖）
+  \item \texttt{config.py} $\rightarrow$ 全局配置依赖，单例模式
+\end{itemize}
+
+\textbf{服务器端模块依赖}：
+\begin{itemize}
+  \item \texttt{api.py} $\rightarrow$ \texttt{models.py} （数据访问层依赖）
+  \item \texttt{models.py} $\rightarrow$ SQLAlchemy ORM $\rightarrow$ PostgreSQL
+  \item Flask蓝图（Blueprint）模式实现API组织
+\end{itemize}
+
+\subsubsection{构建与部署流程}
+\begin{itemize}
+  \item \textbf{客户端打包}：使用PyInstaller生成可执行文件，内嵌模型权重
+  \item \textbf{服务器部署}：基于Gunicorn + Nginx的生产环境部署
+  \item \textbf{前端构建}：Vue CLI构建为静态文件，由Nginx提供服务
+  \item \textbf{CI/CD}：预留GitHub Actions或Jenkins集成
+\end{itemize}
 
 \begin{figure}[h]
   \centering
@@ -169,7 +291,7 @@
 \end{figure}
 
 \section{质量场景描述}
-为确保架构满足关键非功能性需求，我们定义以下质量属性场景。
+为确保架构满足关键非功能性需求，我们定义以下质量属性场景，每个场景都包含刺激、环境、响应和度量标准。
 
 \begin{table}[H]
   \centering

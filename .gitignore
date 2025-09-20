@@ -96,3 +96,4 @@ yarn-error.log
 # cursor
 .specstory/
 .cursorindexingignore
+.qoder/
