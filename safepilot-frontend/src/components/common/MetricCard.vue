@@ -145,21 +145,21 @@ const handle_click = () => {
   border-radius: 20px;
   transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* 极简玻璃拟态效果 */
+  /* 使用新配色方案的玻璃拟态效果 */
   backdrop-filter: blur(16px) saturate(180%);
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.08) 0%, 
-    rgba(255, 255, 255, 0.05) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    rgba(37, 40, 65, 0.8) 0%, 
+    rgba(61, 63, 91, 0.6) 100%);
+  border: 1px solid rgba(231, 209, 187, 0.15);
   
   position: relative;
   overflow: hidden;
-  color: #E2E8F0;
+  color: #A096A2;
   
   box-shadow: 
-    0 8px 32px rgba(42, 45, 58, 0.2),
-    0 2px 8px rgba(31, 35, 41, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 8px 32px rgba(21, 25, 49, 0.3),
+    0 2px 8px rgba(21, 25, 49, 0.2),
+    inset 0 1px 0 rgba(231, 209, 187, 0.08);
 }
 
 .metric-card::before {
@@ -169,7 +169,7 @@ const handle_click = () => {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(135deg, #5B9BD5 0%, #7DD3FC 50%, #93C5FD 100%);
+  background: linear-gradient(135deg, #E7D1BB 0%, #A096A5 50%, #c8b39e 100%);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 350ms ease;
@@ -182,13 +182,13 @@ const handle_click = () => {
 .metric-card--clickable:hover {
   transform: translateY(-4px) scale(1.01);
   box-shadow: 
-    0 12px 40px rgba(91, 155, 213, 0.15),
-    0 4px 16px rgba(42, 45, 58, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  border-color: rgba(91, 155, 213, 0.2);
+    0 12px 40px rgba(231, 209, 187, 0.15),
+    0 4px 16px rgba(21, 25, 49, 0.3),
+    inset 0 1px 0 rgba(231, 209, 187, 0.12);
+  border-color: rgba(231, 209, 187, 0.25);
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.12) 0%, 
-    rgba(91, 155, 213, 0.05) 100%);
+    rgba(37, 40, 65, 0.9) 0%, 
+    rgba(231, 209, 187, 0.08) 100%);
 }
 
 .metric-card--clickable:hover::before {
@@ -197,25 +197,25 @@ const handle_click = () => {
 
 .metric-card .metric-icon .v-avatar {
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(42, 45, 58, 0.3);
+  box-shadow: 0 4px 12px rgba(21, 25, 49, 0.3);
 }
 
 .metric-card:hover .metric-icon .v-avatar {
   transform: scale(1.08) rotate(3deg);
-  box-shadow: 0 6px 16px rgba(91, 155, 213, 0.3);
+  box-shadow: 0 6px 16px rgba(231, 209, 187, 0.3);
 }
 
-/* 文字颜色优化 - 极简风格 */
+/* 文字颜色优化 - 使用新配色方案 */
 .metric-card .metric-title {
-  color: #CBD5E0;
+  color: #A096A2;
 }
 
 .metric-card .metric-value {
-  color: #E2E8F0;
+  color: #E7D1BB;
 }
 
 .metric-card .metric-subtitle {
-  color: #A0AEC0;
+  color: #847a86;
 }
 
 .metric-content {

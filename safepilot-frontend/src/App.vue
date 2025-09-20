@@ -64,7 +64,21 @@ onMounted(() => {
   font-family: 'Roboto', sans-serif;
 }
 
-/* 加载覆盖层 - 极简灰色渐变 */
+/* 根据新配色方案定义 CSS 变量 */
+:root {
+  --primary-100: #E7D1BB;
+  --primary-200: #c8b39e;
+  --primary-300: #84725e;
+  --accent-100: #A096A5;
+  --accent-200: #463e4b;
+  --text-100: #A096A2;
+  --text-200: #847a86;
+  --bg-100: #151931;
+  --bg-200: #252841;
+  --bg-300: #3d3f5b;
+}
+
+/* 加载覆盖层 - 使用新配色方案的深邃渐变 */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -73,7 +87,7 @@ onMounted(() => {
   bottom: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(180deg, #2A2D3A 0%, #1F2329 100%);
+  background: linear-gradient(180deg, #151931 0%, #252841 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,9 +103,9 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 30%, rgba(91, 155, 213, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(142, 154, 175, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 40% 60%, rgba(125, 211, 252, 0.05) 0%, transparent 45%);
+    radial-gradient(circle at 20% 30%, rgba(231, 209, 187, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(160, 150, 165, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(200, 179, 158, 0.05) 0%, transparent 45%);
   animation: backgroundShift 20s ease-in-out infinite;
 }
 
@@ -150,11 +164,11 @@ onMounted(() => {
 }
 
 .loading-logo .v-avatar {
-  background: linear-gradient(135deg, #2A2D3A 0%, #5B9BD5 100%);
+  background: linear-gradient(135deg, #252841 0%, #E7D1BB 100%);
   box-shadow: 
-    0 8px 32px rgba(42, 45, 58, 0.4),
-    0 0 0 4px rgba(91, 155, 213, 0.2),
-    0 0 0 8px rgba(125, 211, 252, 0.1);
+    0 8px 32px rgba(21, 25, 49, 0.4),
+    0 0 0 4px rgba(231, 209, 187, 0.2),
+    0 0 0 8px rgba(160, 150, 165, 0.1);
   animation: float 3s ease-in-out infinite, gentlePulse 2s ease-in-out infinite alternate;
 }
 
@@ -170,15 +184,15 @@ onMounted(() => {
 @keyframes gentlePulse {
   from {
     box-shadow: 
-      0 8px 32px rgba(42, 45, 58, 0.4),
-      0 0 0 4px rgba(91, 155, 213, 0.2),
-      0 0 0 8px rgba(125, 211, 252, 0.1);
+      0 8px 32px rgba(21, 25, 49, 0.4),
+      0 0 0 4px rgba(231, 209, 187, 0.2),
+      0 0 0 8px rgba(160, 150, 165, 0.1);
   }
   to {
     box-shadow: 
-      0 12px 40px rgba(42, 45, 58, 0.5),
-      0 0 0 6px rgba(91, 155, 213, 0.3),
-      0 0 0 12px rgba(125, 211, 252, 0.15);
+      0 12px 40px rgba(21, 25, 49, 0.5),
+      0 0 0 6px rgba(231, 209, 187, 0.3),
+      0 0 0 12px rgba(160, 150, 165, 0.15);
   }
 }
 

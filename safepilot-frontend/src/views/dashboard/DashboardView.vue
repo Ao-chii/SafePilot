@@ -417,12 +417,13 @@ onMounted(async () => {
   border-radius: 3px;
 }
 
-/* 主标题样式 - 极简风格 */
+/* 主标题样式优化 - 使用新配色方案 */
 h1 {
-  background: linear-gradient(135deg, #5B9BD5 0%, #7DD3FC 100%);
+  background: linear-gradient(135deg, #E7D1BB 0%, #A096A5 50%, #c8b39e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
 }
 
 /* 卡片强化样式 - 极简玻璃拟态 */

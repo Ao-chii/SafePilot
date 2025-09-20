@@ -339,8 +339,18 @@ const time_trend_data = ref<any[]>([])
 const driver_ranking = ref<any[]>([])
 const device_efficiency = ref<any[]>([])
 
-// 图表配置
-const pie_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8']
+// 图表配置 - 使用新配色方案
+const pie_colors = [
+  '#E7D1BB', // primary-100
+  '#c8b39e', // primary-200  
+  '#A096A5', // accent-100
+  '#84725e', // primary-300
+  '#463e4b', // accent-200
+  '#6EE7B7', // success
+  '#FDE68A', // warning
+  '#FCA5A5', // error
+  '#93C5FD'  // info
+]
 
 // 计算属性
 const max_daily_count = computed(() => {
@@ -571,10 +581,14 @@ onMounted(() => {
   }
 }
 
-/* 图表容器 */
+/* 图表容器样式优化 */
 .chart-container {
   min-height: 300px;
   padding: 16px 0;
+  background: rgba(61, 63, 91, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(231, 209, 187, 0.1);
 }
 
 .simple-pie-chart,
@@ -586,11 +600,18 @@ onMounted(() => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  box-shadow: 0 0 8px rgba(231, 209, 187, 0.3);
 }
 
 .pie-item {
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(160, 150, 165, 0.15);
+  transition: all 200ms ease;
+}
+
+.pie-item:hover {
+  background: rgba(231, 209, 187, 0.05);
+  border-radius: 8px;
 }
 
 .pie-item:last-child {
@@ -602,25 +623,39 @@ onMounted(() => {
 }
 
 .ranking-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(160, 150, 165, 0.15);
+  transition: all 200ms ease;
+}
+
+.ranking-item:hover {
+  background: rgba(231, 209, 187, 0.05);
+  border-radius: 8px;
 }
 
 .ranking-item:last-child {
   border-bottom: none;
 }
 
-/* 卡片样式 */
+/* 卡片样式优化 */
 :deep(.v-card) {
   backdrop-filter: blur(16px);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(37, 40, 65, 0.8), rgba(61, 63, 91, 0.6));
+  border: 1px solid rgba(231, 209, 187, 0.15);
+  box-shadow: 0 8px 32px rgba(21, 25, 49, 0.3);
+  transition: all 300ms ease;
 }
 
-/* 主标题样式 */
+:deep(.v-card:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(21, 25, 49, 0.4), 0 0 0 1px rgba(231, 209, 187, 0.2);
+}
+
+/* 主标题样式优化 */
 h1 {
-  background: linear-gradient(135deg, #5B9BD5 0%, #7DD3FC 100%);
+  background: linear-gradient(135deg, #E7D1BB 0%, #A096A5 50%, #c8b39e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
 }
 </style>

@@ -15,8 +15,10 @@ export const auth_api = {
                 username: string
                 email: string
                 password: string
-                first_name?: string
+                first_name: string
                 last_name?: string
+                phone: string
+                role: string
         }) =>
                 api_client.post('/auth/register', data),
         
@@ -25,8 +27,35 @@ export const auth_api = {
                 api_client.get('/auth/profile'),
         
         // 修改密码
-        change_password: (old_password: string, new_password: string) =>
-                api_client.post('/auth/change-password', { old_password, new_password }),
+        change_password: (data: {
+                current_password: string
+                new_password: string
+        }) =>
+                api_client.post('/auth/change-password', data),
+        
+        // 发送密码重置验证码
+        send_reset_code: (data: {
+                contact: string
+                type: 'email' | 'phone'
+        }) =>
+                api_client.post('/auth/send-reset-code', data),
+        
+        // 验证重置验证码
+        verify_reset_code: (data: {
+                contact: string
+                type: 'email' | 'phone'
+                code: string
+        }) =>
+                api_client.post('/auth/verify-reset-code', data),
+        
+        // 重置密码
+        reset_password: (data: {
+                contact: string
+                type: 'email' | 'phone'
+                code: string
+                new_password: string
+        }) =>
+                api_client.post('/auth/reset-password', data),
 }
 
 // 设备管理相关接口

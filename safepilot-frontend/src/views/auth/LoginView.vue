@@ -5,9 +5,13 @@
   <div class="login-form">
     <!-- Logo和标题 -->
     <div class="text-center mb-8">
-      <!-- 使用Unicode符号作为backup -->
-      <div class="logo-icon mb-4">
-        🚗
+      <!-- 使用自定义Logo -->
+      <div class="logo-container mb-4">
+        <img 
+          src="/logo.png" 
+          alt="SafePilot Logo" 
+          class="logo-image"
+        />
       </div>
       <h1 class="text-h4 font-weight-bold mb-2">
         SafePilot
@@ -85,15 +89,26 @@
           {{ loading ? '登录中...' : '登录' }}
         </v-btn>
         
-        <!-- 忘记密码链接 -->
+        <!-- 忘记密码和注册链接 -->
         <div class="text-center">
           <v-btn
             variant="text"
             color="primary"
             size="small"
             @click="handle_forgot_password"
+            class="mr-2"
           >
             忘记密码？
+          </v-btn>
+          <span class="text-grey-darken-2">|</span>
+          <v-btn
+            variant="text"
+            color="primary"
+            size="small"
+            @click="$router.push('/auth/register')"
+            class="ml-2"
+          >
+            立即注册
           </v-btn>
         </div>
       </v-form>
@@ -104,7 +119,7 @@
         type="info"
         variant="outlined"
         density="compact"
-        text="开发模式：默认账户 admin/admin123"
+        text="开发模式：默认账户 admin/Admin123"
       />
     </v-card>
   </div>
@@ -129,7 +144,7 @@ const error_message = ref('')
 // 表单数据 - 开发环境默认值
 const form_data = reactive({
   username: 'admin',
-  password: 'admin123',
+  password: 'Admin123',
   remember: false,
 })
 
@@ -141,7 +156,10 @@ const username_rules = [
 
 const password_rules = [
   (v: string) => !!v || '请输入密码',
-  (v: string) => v.length >= 6 || '密码至少6个字符',
+  (v: string) => v.length >= 8 || '密码至少8个字符',
+  (v: string) => /[A-Z]/.test(v) || '密码必须包含大写字母',
+  (v: string) => /[a-z]/.test(v) || '密码必须包含小写字母', 
+  (v: string) => /\d/.test(v) || '密码必须包含数字',
 ]
 
 // 登录处理
@@ -153,7 +171,7 @@ const handle_login = async () => {
   
   try {
     // 临时处理：如果没有后端，直接跳转
-    if (form_data.username === 'admin' && form_data.password === 'admin123') {
+    if (form_data.username === 'admin' && form_data.password === 'Admin123') {
       // 模拟登录成功
       const mock_user = {
         id: 1,
@@ -201,7 +219,7 @@ const handle_login = async () => {
   } catch (error: any) {
     // 如果是网络错误，给出友好提示
     if (error.message.includes('Network Error') || error.code === 'ERR_NETWORK') {
-      error_message.value = '无法连接到服务器，请检查网络连接或使用默认账户：admin/admin123'
+      error_message.value = '无法连接到服务器，请检查网络连接或使用默认账户：admin/Admin123'
     } else {
       error_message.value = error.message || '登录失败，请检查用户名和密码'
     }
@@ -229,16 +247,81 @@ if (typeof Storage !== 'undefined') {
 </script>
 
 <style scoped>
-.logo-icon {
-  font-size: 72px;
-  line-height: 1;
+/* Logo容器和图片样式 */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 12px;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-image:hover {
+  transform: scale(1.05);
 }
 
 .login-form {
   width: 100%;
-  max-width: 450px;
+  max-width: 420px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+/* 卡片样式优化 - 符合新配色方案 */
+:deep(.v-card) {
+  backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, 
+    rgba(37, 40, 65, 0.8) 0%, 
+    rgba(61, 63, 91, 0.6) 100%);
+  border: 1px solid rgba(231, 209, 187, 0.15);
+  box-shadow: 0 8px 32px rgba(21, 25, 49, 0.3);
+  transition: all 300ms ease;
+}
+
+/* 标题渐变效果 */
+h1 {
+  background: linear-gradient(135deg, #E7D1BB 0%, #A096A5 50%, #c8b39e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
+}
+
+/* 输入框样式优化 */
+:deep(.v-text-field) {
+  margin-bottom: 1rem;
+}
+
+:deep(.v-field) {
+  border-radius: 12px;
+  transition: all 200ms ease;
+}
+
+:deep(.v-field:hover) {
+  transform: translateY(-1px);
+}
+
+:deep(.v-field--focused) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 209, 187, 0.2);
+}
+
+/* 按钮样式优化 */
+:deep(.v-btn) {
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 200ms ease;
+}
+
+:deep(.v-btn:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(231, 209, 187, 0.3);
 }
 
 /* 响应式设计 */

@@ -200,40 +200,40 @@ const handle_logout = () => {
 }
 
 .app-header {
-  background: linear-gradient(135deg, #2A2D3A 0%, #5B9BD5 100%) !important;
+  background: linear-gradient(135deg, #252841 0%, #E7D1BB 100%) !important;
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(91, 155, 213, 0.2);
-  box-shadow: 0 2px 8px rgba(42, 45, 58, 0.3);
+  border-bottom: 1px solid rgba(231, 209, 187, 0.2);
+  box-shadow: 0 2px 8px rgba(21, 25, 49, 0.3);
 }
 
 :deep(.v-navigation-drawer) {
-  border-right: 1px solid rgba(91, 155, 213, 0.15);
-  background: linear-gradient(180deg, #2A2D3A 0%, #1F2329 100%);
-  box-shadow: 2px 0 8px rgba(42, 45, 58, 0.2);
+  border-right: 1px solid rgba(231, 209, 187, 0.15);
+  background: linear-gradient(180deg, #252841 0%, #151931 100%);
+  box-shadow: 2px 0 8px rgba(21, 25, 49, 0.2);
 }
 
 :deep(.v-list-item) {
   border-radius: 12px;
   margin: 4px 8px;
   transition: all 250ms ease;
-  color: #CBD5E0;
+  color: #A096A2;
 }
 
 :deep(.v-list-item:hover) {
-  background: rgba(91, 155, 213, 0.12);
+  background: rgba(231, 209, 187, 0.12);
   transform: translateX(4px);
-  color: #E2E8F0;
-  box-shadow: 0 2px 8px rgba(91, 155, 213, 0.2);
+  color: #E7D1BB;
+  box-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
 }
 
 :deep(.v-list-item--active) {
-  background: linear-gradient(135deg, rgba(91, 155, 213, 0.2), rgba(125, 211, 252, 0.1));
-  color: #5B9BD5;
-  border-left: 3px solid #5B9BD5;
-  box-shadow: 0 2px 8px rgba(91, 155, 213, 0.3);
+  background: linear-gradient(135deg, rgba(231, 209, 187, 0.2), rgba(160, 150, 165, 0.1));
+  color: #E7D1BB;
+  border-left: 3px solid #E7D1BB;
+  box-shadow: 0 2px 8px rgba(231, 209, 187, 0.3);
 }
 
 :deep(.v-main) {
-  background: linear-gradient(135deg, #1F2329 0%, #2A2D3A 100%);
+  background: linear-gradient(135deg, #151931 0%, #252841 100%);
 }
 </style>
