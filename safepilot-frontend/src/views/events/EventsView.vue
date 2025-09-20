@@ -372,24 +372,37 @@ onMounted(() => {
   }
 }
 
-/* 美化表格 */
+/* 美化表格 - 统一配色 */
 :deep(.v-data-table) {
   background: transparent;
 }
 
 :deep(.v-data-table-header) {
-  background: rgba(91, 155, 213, 0.1);
+  background: rgba(231, 209, 187, 0.1);
 }
 
 :deep(.v-data-table__td) {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(231, 209, 187, 0.1);
+  color: #A096A2;
 }
 
-/* 卡片样式 */
+:deep(.v-data-table__tr:hover) {
+  background: rgba(231, 209, 187, 0.05) !important;
+}
+
+/* 卡片样式 - 统一配色方案 */
 :deep(.v-card) {
   backdrop-filter: blur(16px);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(37, 40, 65, 0.8), rgba(61, 63, 91, 0.6));
+  border: 1px solid rgba(231, 209, 187, 0.15);
+  transition: all 300ms ease;
+  color: #A096A2;
+  box-shadow: 0 8px 32px rgba(21, 25, 49, 0.3);
+}
+
+:deep(.v-card:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(21, 25, 49, 0.4), 0 0 0 1px rgba(231, 209, 187, 0.2);
 }
 
 /* 主标题样式优化 - 使用新配色方案 */

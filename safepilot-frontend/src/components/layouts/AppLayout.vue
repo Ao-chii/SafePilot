@@ -78,20 +78,14 @@
       app
     >
       <template #prepend>
-        <v-list-item
-          lines="two"
-          :prepend-avatar="user_avatar"
-          :title="user_display_name"
-          :subtitle="user?.email"
-        >
-          <template #append>
-            <v-btn
-              variant="text"
-              icon="mdi-chevron-left"
-              @click="rail = !rail"
-            />
-          </template>
-        </v-list-item>
+        <div class="nav-header">
+          <v-btn
+            variant="text"
+            :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
+            class="nav-toggle-btn"
+            @click="rail = !rail"
+          />
+        </div>
       </template>
       
       <v-divider />
@@ -235,5 +229,23 @@ const handle_logout = () => {
 
 :deep(.v-main) {
   background: linear-gradient(135deg, #151931 0%, #252841 100%);
+}
+
+.nav-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  min-height: 56px;
+}
+
+.nav-toggle-btn {
+  color: #E7D1BB !important;
+  transition: all 250ms ease;
+}
+
+.nav-toggle-btn:hover {
+  background: rgba(231, 209, 187, 0.12) !important;
+  transform: scale(1.1);
 }
 </style>

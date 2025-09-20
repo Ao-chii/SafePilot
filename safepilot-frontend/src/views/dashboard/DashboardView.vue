@@ -401,7 +401,7 @@ onMounted(async () => {
   max-height: 400px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  scrollbar-color: rgba(231, 209, 187, 0.3) transparent;
 }
 
 .v-timeline::-webkit-scrollbar {
@@ -413,7 +413,7 @@ onMounted(async () => {
 }
 
 .v-timeline::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #5B9BD5, #7DD3FC);
+  background: linear-gradient(135deg, #E7D1BB, #c8b39e);
   border-radius: 3px;
 }
 
@@ -426,31 +426,23 @@ h1 {
   text-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
 }
 
-/* 卡片强化样式 - 极简玻璃拟态 */
+/* 卡片样式优化 - 统一配色方案 */
 :deep(.v-card) {
-  backdrop-filter: blur(16px) saturate(180%);
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.08) 0%, 
-    rgba(255, 255, 255, 0.05) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, rgba(37, 40, 65, 0.8), rgba(61, 63, 91, 0.6));
+  border: 1px solid rgba(231, 209, 187, 0.15);
   transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
-  color: #E2E8F0;
-  box-shadow: 
-    0 8px 32px rgba(42, 45, 58, 0.2),
-    0 2px 8px rgba(31, 35, 41, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #A096A2;
+  box-shadow: 0 8px 32px rgba(21, 25, 49, 0.3);
 }
 
 :deep(.v-card:hover) {
-  transform: translateY(-3px) scale(1.005);
-  box-shadow: 
-    0 12px 40px rgba(91, 155, 213, 0.15),
-    0 4px 16px rgba(42, 45, 58, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  border-color: rgba(91, 155, 213, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(21, 25, 49, 0.4), 0 0 0 1px rgba(231, 209, 187, 0.2);
+  border-color: rgba(231, 209, 187, 0.25);
 }
 
-/* 按钮优化 */
+/* 按钮优化 - 统一配色 */
 :deep(.v-btn) {
   border-radius: 12px;
   font-weight: 500;
@@ -464,28 +456,28 @@ h1 {
 
 :deep(.v-btn:hover) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(91, 155, 213, 0.3);
+  box-shadow: 0 6px 16px rgba(231, 209, 187, 0.3);
 }
 
-/* 时间线样式优化 - 极简风格 */
+/* 时间线样式优化 - 统一配色 */
 :deep(.v-timeline-item) {
   margin-bottom: 16px;
 }
 
 :deep(.v-timeline-item__body) {
   padding: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(61, 63, 91, 0.3);
   border-radius: 12px;
   border-left: 3px solid transparent;
   transition: all 250ms ease;
-  color: #E2E8F0;
+  color: #A096A2;
   backdrop-filter: blur(8px);
 }
 
 :deep(.v-timeline-item:hover .v-timeline-item__body) {
-  background: rgba(91, 155, 213, 0.08);
-  border-left-color: #5B9BD5;
+  background: rgba(231, 209, 187, 0.08);
+  border-left-color: #E7D1BB;
   transform: translateX(4px);
-  box-shadow: 0 2px 8px rgba(91, 155, 213, 0.2);
+  box-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
 }
 </style>
