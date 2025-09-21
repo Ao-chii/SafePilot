@@ -150,6 +150,11 @@ const nav_items = [
     path: '/dashboard',
   },
   {
+    title: '实时监控',
+    icon: 'mdi-video-box',
+    path: '/monitor',
+  },
+  {
     title: '设备管理',
     icon: 'mdi-cellphone-link',
     path: '/devices',

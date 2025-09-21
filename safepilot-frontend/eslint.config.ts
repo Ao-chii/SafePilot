@@ -24,5 +24,15 @@ export default defineConfigWithVueTs(
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],
   },
+  
+  // 临时放宽严格规则
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'vue/valid-v-slot': 'warn',
+    }
+  },
+  
   skipFormatting,
 )

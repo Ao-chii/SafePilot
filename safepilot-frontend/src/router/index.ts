@@ -12,6 +12,7 @@ import ChangePasswordView from '../views/auth/ChangePasswordView.vue'
 
 // 主页面
 import DashboardView from '../views/dashboard/DashboardView.vue'
+import MonitorView from '../views/monitor/MonitorView.vue'
 import EventsView from '../views/events/EventsView.vue'
 import DriversView from '../views/drivers/DriversView.vue'
 import DevicesView from '../views/devices/DevicesView.vue'
@@ -54,6 +55,11 @@ const router = createRouter({
                     path: 'dashboard',
                     name: 'Dashboard',
                     component: DashboardView,
+                },
+                {
+                    path: 'monitor',
+                    name: 'Monitor',
+                    component: MonitorView,
                 },
                 {
                     path: 'events',

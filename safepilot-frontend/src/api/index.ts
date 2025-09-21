@@ -178,3 +178,29 @@ export const system_api = {
     health_check: () =>
         api_client.get('/system/health'),
 }
+
+// 实时监控相关接口
+export const monitor_api = {
+    // 获取视频流列表
+    get_video_streams: () =>
+        api_client.get('/monitor/streams'),
+    
+    // 获取指定视频流信息
+    get_stream_info: (stream_id: string) =>
+        api_client.get(`/monitor/streams/${stream_id}`),
+    
+    // 获取实时告警
+    get_real_time_alerts: (params?: {
+        limit?: number
+        level?: string
+    }) =>
+        api_client.get('/monitor/alerts', { params }),
+    
+    // 处理告警
+    handle_alert: (alert_id: string, action: string) =>
+        api_client.post(`/monitor/alerts/${alert_id}/handle`, { action }),
+    
+    // 获取系统状态统计
+    get_system_status: () =>
+        api_client.get('/monitor/status'),
+}
