@@ -6,7 +6,7 @@
     <!-- Logo和标题 -->
     <div class="text-center mb-8">
       <div class="logo-icon mb-4">
-        📝
+        <v-icon size="72" color="primary">mdi-account-plus</v-icon>
       </div>
       <h1 class="text-h4 font-weight-bold mb-2">
         用户注册
@@ -27,7 +27,7 @@
           v-model="form_data.username"
           :rules="username_rules"
           label="用户名"
-          prepend-inner-icon="👤"
+          prepend-inner-icon="mdi-account"
           variant="outlined"
           :disabled="loading"
           autocomplete="username"
@@ -40,7 +40,7 @@
           v-model="form_data.email"
           :rules="email_rules"
           label="邮箱地址"
-          prepend-inner-icon="📧"
+          prepend-inner-icon="mdi-email"
           variant="outlined"
           :disabled="loading"
           autocomplete="email"
@@ -55,7 +55,7 @@
               v-model="form_data.first_name"
               :rules="first_name_rules"
               label="姓"
-              prepend-inner-icon="🏷️"
+              prepend-inner-icon="mdi-account-outline"
               variant="outlined"
               :disabled="loading"
               autocomplete="given-name"
@@ -77,7 +77,7 @@
           v-model="form_data.phone"
           :rules="phone_rules"
           label="手机号码"
-          prepend-inner-icon="📱"
+          prepend-inner-icon="mdi-phone"
           variant="outlined"
           :disabled="loading"
           autocomplete="tel"
@@ -91,8 +91,8 @@
           :rules="password_rules"
           :type="show_password ? 'text' : 'password'"
           label="密码"
-          prepend-inner-icon="🔒"
-          :append-inner-icon="show_password ? '👁️' : '🙈'"
+          prepend-inner-icon="mdi-lock"
+          :append-inner-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
           variant="outlined"
           :disabled="loading"
           autocomplete="new-password"
@@ -106,8 +106,8 @@
           :rules="confirm_password_rules"
           :type="show_confirm_password ? 'text' : 'password'"
           label="确认密码"
-          prepend-inner-icon="🔒"
-          :append-inner-icon="show_confirm_password ? '👁️' : '🙈'"
+          prepend-inner-icon="mdi-lock"
+          :append-inner-icon="show_confirm_password ? 'mdi-eye' : 'mdi-eye-off'"
           variant="outlined"
           :disabled="loading"
           autocomplete="new-password"
@@ -135,7 +135,7 @@
           v-model="form_data.role"
           :items="role_options"
           label="用户角色"
-          prepend-inner-icon="🎭"
+          prepend-inner-icon="mdi-account-badge"
           variant="outlined"
           :disabled="loading"
           class="mb-4"
@@ -192,7 +192,7 @@
           block
           class="mb-4"
         >
-          <span style="margin-right: 8px;">📝</span>
+          <v-icon class="mr-2">mdi-account-plus</v-icon>
           {{ loading ? '注册中...' : '注册账户' }}
         </v-btn>
         

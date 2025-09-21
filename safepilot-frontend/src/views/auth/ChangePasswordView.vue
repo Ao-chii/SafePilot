@@ -10,7 +10,7 @@
             <!-- 页面标题 -->
             <div class="text-center mb-6">
               <div class="password-icon mb-4">
-                🔐
+                <v-icon size="72" color="primary">mdi-lock-reset</v-icon>
               </div>
               <h1 class="text-h4 font-weight-bold mb-2">
                 修改密码
@@ -31,8 +31,8 @@
                 :rules="current_password_rules"
                 :type="show_current_password ? 'text' : 'password'"
                 label="当前密码"
-                prepend-inner-icon="🔒"
-                :append-inner-icon="show_current_password ? '👁️' : '🙈'"
+                prepend-inner-icon="mdi-lock"
+                :append-inner-icon="show_current_password ? 'mdi-eye' : 'mdi-eye-off'"
                 variant="outlined"
                 :disabled="loading"
                 autocomplete="current-password"
@@ -46,8 +46,8 @@
                 :rules="new_password_rules"
                 :type="show_new_password ? 'text' : 'password'"
                 label="新密码"
-                prepend-inner-icon="🔑"
-                :append-inner-icon="show_new_password ? '👁️' : '🙈'"
+                prepend-inner-icon="mdi-lock-plus"
+                :append-inner-icon="show_new_password ? 'mdi-eye' : 'mdi-eye-off'"
                 variant="outlined"
                 :disabled="loading"
                 autocomplete="new-password"
@@ -61,8 +61,8 @@
                 :rules="confirm_password_rules"
                 :type="show_confirm_password ? 'text' : 'password'"
                 label="确认新密码"
-                prepend-inner-icon="🔑"
-                :append-inner-icon="show_confirm_password ? '👁️' : '🙈'"
+                prepend-inner-icon="mdi-lock-plus"
+                :append-inner-icon="show_confirm_password ? 'mdi-eye' : 'mdi-eye-off'"
                 variant="outlined"
                 :disabled="loading"
                 autocomplete="new-password"
@@ -133,7 +133,7 @@
                 block
                 class="mb-4"
               >
-                <span style="margin-right: 8px;">🔐</span>
+                <v-icon class="mr-2">mdi-lock-reset</v-icon>
                 {{ loading ? '修改中...' : '修改密码' }}
               </v-btn>
 
@@ -275,9 +275,45 @@ const change_password = async () => {
 
 .change-password-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #151931 0%, #252841 100%);
   display: flex;
   align-items: center;
+}
+
+/* 统一配色方案 */
+:deep(.v-card) {
+  backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, rgba(37, 40, 65, 0.8), rgba(61, 63, 91, 0.6));
+  border: 1px solid rgba(231, 209, 187, 0.15);
+  transition: all 300ms ease;
+  color: #A096A2;
+  box-shadow: 0 8px 32px rgba(21, 25, 49, 0.3);
+}
+
+/* 主标题样式优化 */
+h1 {
+  background: linear-gradient(135deg, #E7D1BB 0%, #A096A5 50%, #c8b39e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px rgba(231, 209, 187, 0.2);
+}
+
+/* 按钮优化 */
+:deep(.v-btn) {
+  border-radius: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:deep(.v-btn--variant-outlined) {
+  border: 2px solid;
+}
+
+:deep(.v-btn:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(231, 209, 187, 0.3);
 }
 
 /* 响应式设计 */

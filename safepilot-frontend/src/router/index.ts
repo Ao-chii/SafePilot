@@ -16,6 +16,8 @@ import EventsView from '../views/events/EventsView.vue'
 import DriversView from '../views/drivers/DriversView.vue'
 import DevicesView from '../views/devices/DevicesView.vue'
 import StatsView from '../views/stats/StatsView.vue'
+import ProfileView from '../views/ProfileView.vue'
+import SettingsView from '../views/SettingsView.vue'
 import ColorSchemeDemo from '../views/ColorSchemeDemo.vue'
 
 const router = createRouter({
@@ -72,6 +74,16 @@ const router = createRouter({
                     path: 'stats',
                     name: 'Stats',
                     component: StatsView,
+                },
+                {
+                    path: 'profile',
+                    name: 'Profile',
+                    component: ProfileView,
+                },
+                {
+                    path: 'settings',
+                    name: 'Settings',
+                    component: SettingsView,
                 },
                 {
                     path: 'color-demo',

@@ -32,7 +32,7 @@
           v-model="form_data.username"
           :rules="username_rules"
           label="用户名"
-          prepend-inner-icon="👤"
+          prepend-inner-icon="mdi-account"
           variant="outlined"
           :disabled="loading"
           autocomplete="username"
@@ -46,8 +46,8 @@
           :rules="password_rules"
           :type="show_password ? 'text' : 'password'"
           label="密码"
-          prepend-inner-icon="🔒"
-          :append-inner-icon="show_password ? '👁️' : '🙈'"
+          prepend-inner-icon="mdi-lock"
+          :append-inner-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
           variant="outlined"
           :disabled="loading"
           autocomplete="current-password"
@@ -85,7 +85,7 @@
           block
           class="mb-4"
         >
-          <span style="margin-right: 8px;">🔑</span>
+          <v-icon class="mr-2">mdi-login</v-icon>
           {{ loading ? '登录中...' : '登录' }}
         </v-btn>
         

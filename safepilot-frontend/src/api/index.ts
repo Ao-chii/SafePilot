@@ -26,6 +26,18 @@ export const auth_api = {
     get_profile: () =>
         api_client.get('/auth/profile'),
     
+    // 更新用户资料
+    update_profile: (data: {
+        first_name?: string
+        last_name?: string
+        phone?: string
+    }) =>
+        api_client.put('/auth/profile', data),
+    
+    // 删除账户
+    delete_account: () =>
+        api_client.delete('/auth/account'),
+    
     // 修改密码
     change_password: (data: {
         current_password: string

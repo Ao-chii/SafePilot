@@ -4,6 +4,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { auth_api } from '../api'
 
 interface User {
     id: number
@@ -11,7 +12,10 @@ interface User {
     email: string
     first_name?: string
     last_name?: string
+    phone?: string
+    role?: string
     is_admin?: boolean
+    created_at?: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -60,6 +64,21 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('user', JSON.stringify(user_data))
     }
 
+    // 获取用户资料
+    const fetch_user_profile = async () => {
+        try {
+            is_loading.value = true
+            const response = await auth_api.get_profile()
+            update_user(response.data)
+            return response.data
+        } catch (error) {
+            console.error('获取用户资料失败:', error)
+            throw error
+        } finally {
+            is_loading.value = false
+        }
+    }
+
     return {
         // 状态
         access_token,
@@ -74,5 +93,6 @@ export const useAuthStore = defineStore('auth', () => {
         login,
         logout,
         update_user,
+        fetch_user_profile,
     }
 })
