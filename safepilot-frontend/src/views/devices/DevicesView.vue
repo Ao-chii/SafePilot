@@ -477,8 +477,7 @@ const load_devices = async () => {
   loading.value = true
   try {
     const response = await device_api.get_devices()
-    devices.value = response.data.devices || []
-    
+    devices.value = response.data || [] 
     // 模拟一些设备状态数据（实际应该从API获取）
     devices.value = devices.value.map(device => ({
       ...device,
@@ -543,6 +542,7 @@ const save_device = async () => {
         device_id: device_form.device_id,
         name: device_form.name,
         description: device_form.description,
+        is_active: device_form.is_active,
       })
     }
     

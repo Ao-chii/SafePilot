@@ -85,6 +85,7 @@ export const device_api = {
         device_id: string
         name: string
         description?: string
+        is_active?: boolean
     }) =>
         api_client.post('/devices', data),
     
