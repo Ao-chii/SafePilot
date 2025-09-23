@@ -116,6 +116,7 @@ export const driver_api = {
     create_driver: (data: {
         driver_id: string
         name: string
+        is_active?: boolean
     }) =>
         api_client.post('/drivers', data),
     

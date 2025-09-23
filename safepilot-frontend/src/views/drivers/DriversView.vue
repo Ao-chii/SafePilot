@@ -279,7 +279,7 @@ const load_drivers = async () => {
   loading.value = true
   try {
     const response = await driver_api.get_drivers()
-    drivers.value = response.data.drivers || []
+    drivers.value = response.data || []
   } catch (error) {
     console.error('加载驾驶员数据失败:', error)
     drivers.value = []
@@ -341,6 +341,7 @@ const save_driver = async () => {
       await driver_api.create_driver({
         driver_id: driver_form.driver_id,
         name: driver_form.name,
+        is_active: driver_form.is_active,
       })
     }
     
