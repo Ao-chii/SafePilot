@@ -102,11 +102,22 @@
         <template #item.actions="{ item }">
           <div class="d-flex">
             <v-btn
+              @click="view_driver_detail(item)"
+              icon
+              size="small"
+              variant="text"
+              class="mr-1"
+              title="查看详情"
+            >
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
+            <v-btn
               @click="edit_driver(item)"
               icon
               size="small"
               variant="text"
               class="mr-1"
+              title="编辑"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -117,6 +128,7 @@
               variant="text"
               :color="item.is_active ? 'warning' : 'success'"
               class="mr-1"
+              :title="item.is_active ? '暂停' : '启用'"
             >
               <v-icon>{{ item.is_active ? 'mdi-pause' : 'mdi-play' }}</v-icon>
             </v-btn>
@@ -126,6 +138,7 @@
               size="small"
               variant="text"
               color="error"
+              title="删除"
             >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
@@ -209,8 +222,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { driver_api } from '../../api'
 import StatusChip from '../../components/common/StatusChip.vue'
+
+const router = useRouter()
 
 // 状态管理
 const loading = ref(false)
@@ -296,6 +312,11 @@ const search_drivers = () => {
 // 刷新数据
 const refresh_data = () => {
   load_drivers()
+}
+
+// 查看驾驶员详情
+const view_driver_detail = (driver: any) => {
+  router.push(`/drivers/${driver.driver_id}`)
 }
 
 // 打开创建对话框

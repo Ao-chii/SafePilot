@@ -153,6 +153,47 @@
     \label{fig:real_time_alert}
 \end{figure}
 
+\textbf{3. 远程监控查看用例}
+\begin{itemize}
+    \item \textbf{用例名称}：远程监控查看
+    \item \textbf{简要描述}：管理员通过Web管理界面实时查看车载摄像头的视频流，监控驾驶员状态和行为。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 管理员登录Web管理后台，进入"实时监控"页面。
+            \item 选择要监控的设备或驾驶员，系统建立与车载设备的视频流连接。
+            \item 通过WebRTC或视频流协议在Web界面中实时显示摄像头画面。
+            \item 管理员可以看到实时的视频画面以及系统标注的检测结果（如面部关键点、危险行为框选）。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若设备离线或网络连接不稳定，系统显示连接状态并提供重连选项。
+    \end{itemize}
+    \item \textbf{特殊需求}：支持多路视频流同时显示，视频延迟应低于3秒。
+    \item \textbf{前置条件}：管理员已登录，目标设备在线且摄像头正常工作。
+    \item \textbf{后置条件}：管理员能够实时了解驾驶员状态。
+\end{itemize}
+
+\textbf{4. Web端实时告警接收用例}
+\begin{itemize}
+    \item \textbf{用例名称}：Web端实时告警接收
+    \item \textbf{简要描述}：当车载系统检测到危险行为时，Web管理界面能够实时接收并展示告警信息。
+    \item \textbf{事件流}：
+    \begin{itemize}
+        \item \textbf{基本事件流}：
+        \begin{enumerate}
+            \item 车载系统检测到危险行为并触发本地报警。
+            \item 系统通过WebSocket连接向Web管理后台推送实时告警数据。
+            \item Web界面接收告警信息，以弹窗、声音提示或高亮显示等方式通知管理员。
+            \item 管理员可以查看告警详情（时间、地点、驾驶员、行为类型、抓拍图像等）。
+            \item 管理员可以对告警进行处理（确认、忽略、联系驾驶员等操作）。
+        \end{enumerate}
+        \item \textbf{备选事件流}：若WebSocket连接中断，系统自动重连并补推未接收的告警信息。
+    \end{itemize}
+    \item \textbf{特殊需求}：告警推送延迟应低于1秒，支持告警优先级分级显示。
+    \item \textbf{前置条件}：Web客户端与服务器建立稳定的WebSocket连接。
+    \item \textbf{后置条件}：告警信息被记录并可供后续查询分析。
+\end{itemize}
+
 \subsubsection{用户账户管理系统功能模块}
 % Detailing user account management functions
 
@@ -390,17 +431,51 @@
 \subsection{支持软件}
 % Specifying software requirements
 \begin{itemize}
-    \item \textbf{前端操作系统}：Windows、macOS、Linux（如Ubuntu 22.04），或Android/iOS（通过浏览器或Capacitor应用）。
-    \item \textbf{后端服务器}：Linux（如CentOS 7）。
-    \item \textbf{数据库}：MySQL 或 PostgreSQL。
-    \item \textbf{开发框架}：Python + OpenCV（视频处理） + YOLOv11（目标检测，基于PyTorch，支持ONNX/TFLite优化） + MediaPipe（关键点检测，可选） + Flask（后端服务器） + Vue.js和Vuetify（前端Web界面，支持Capacitor打包） + flask-socketio（实时通信） + pygame/playsound（语音报警） + PyInstaller（Windows/Linux打包）。
+    \item \textbf{前端操作系统}：Windows、macOS、Linux（如Ubuntu 22.04），或Android/iOS（通过浏览器）。
+    \item \textbf{后端服务器}：Linux（如CentOS 7或Ubuntu 20.04 LTS）。
+    \item \textbf{数据库}：PostgreSQL 14+（推荐）或 MySQL 8.0+。
+    \item \textbf{系统架构}：采用前后端分离架构，支持分布式部署。
+    \begin{itemize}
+        \item \textbf{车载客户端}：Python 3.8+ + OpenCV（视频处理） + YOLOv11（目标检测，基于PyTorch） + MediaPipe（面部关键点检测） + pygame/playsound（本地语音报警） + PyInstaller（打包为可执行文件）。
+        \item \textbf{后端服务器}：Flask 2.0+ + Flask-RESTful（RESTful API） + Flask-SocketIO（WebSocket实时通信） + SQLAlchemy（数据库ORM） + Gunicorn（WSGI服务器） + Nginx（反向代理和静态文件服务）。
+        \item \textbf{Web前端}：Vue.js 3+ + Vuetify 3（Material Design组件库） + Vue Router（路由管理） + Pinia（状态管理） + Axios（HTTP客户端） + Socket.IO-client（WebSocket客户端） + Vite（构建工具）。
+    \end{itemize}
 \end{itemize}
 
 \subsection{接口}
 % Specifying interface requirements
 \begin{itemize}
-    \item \textbf{硬件接口}：系统需支持通过USB或CSI接口连接摄像头。
-    \item \textbf{软件接口}：系统通过RESTful API与后端服务器进行数据交互。内部模块间通过定义好的函数接口进行调用和数据传递。
+    \item \textbf{硬件接口}：系统需支持通过USB或CSI接口连接摄像头，分辨率不低于720p，帧率不低于25fps。
+    \item \textbf{软件接口}：采用标准化的接口设计，确保系统各组件间的高效通信。
+    \begin{itemize}
+        \item \textbf{RESTful API接口}：后端服务器提供标准RESTful API，支持JSON格式数据交换。主要接口包括：
+        \begin{itemize}
+            \item 用户认证接口：POST /auth/login, POST /auth/register, POST /auth/change-password
+            \item 设备管理接口：GET /devices, POST /devices, PUT /devices/\{id\}, DELETE /devices/\{id\}
+            \item 驾驶员管理接口：GET /drivers, POST /drivers, PUT /drivers/\{id\}, DELETE /drivers/\{id\}
+            \item 事件数据接口：GET /events, POST /events, GET /events/\{id\}
+            \item 统计分析接口：GET /stats/device/\{id\}, GET /stats/driver/\{id\}
+            \item 实时监控接口：GET /monitor/streams, GET /monitor/alerts, POST /monitor/alerts/\{id\}/handle
+        \end{itemize}
+        \item \textbf{WebSocket实时通信接口}：支持双向实时数据推送，主要用于：
+        \begin{itemize}
+            \item 实时告警推送：服务器向Web客户端推送危险行为告警信息
+            \item 设备状态更新：实时推送设备在线状态、连接状态等信息
+            \item 视频流传输：支持实时视频流数据传输（可选WebRTC协议）
+        \end{itemize}
+        \item \textbf{数据格式规范}：
+        \begin{itemize}
+            \item API请求/响应均采用JSON格式，字段命名采用snake\_case风格
+            \item 时间字段统一使用ISO 8601格式（如：2025-09-22T10:30:00Z）
+            \item 错误响应包含统一的错误码和错误描述信息
+        \end{itemize}
+        \item \textbf{认证与授权}：
+        \begin{itemize}
+            \item 采用JWT（JSON Web Token）进行用户认证
+            \item API接口支持基于角色的访问控制（RBAC）
+            \item 支持Token刷新和过期管理机制
+        \end{itemize}
+    \end{itemize}
 \end{itemize}
 
 \end{document}

@@ -101,9 +101,9 @@
 应用 4+1 视图模型，从多视角剖析系统架构，确保覆盖功能、动态、开发与部署维度。
 
 \subsection{逻辑视图}
-此视图展示了系统的主要功能模块及其关系，采用分层设计和设计模式组合。
+此视图展示了系统的主要功能模块及其关系，采用分层设计和设计模式组合。系统整体采用前后端分离架构，包含车载客户端、Web管理端和后端服务器三个主要部分。
 
-\subsubsection{核心类与接口设计}
+\subsubsection{车载客户端核心类与接口设计}
 \begin{itemize}
   \item \textbf{检测层}：
     \begin{itemize}
@@ -125,12 +125,70 @@
     \end{itemize}
 \end{itemize}
 
+\subsubsection{Web前端组件架构设计}
+\begin{itemize}
+  \item \textbf{布局层（Layout Layer）}：
+    \begin{itemize}
+      \item \texttt{AppLayout}：主应用布局组件，包含导航栏、侧边栏和主内容区
+      \item \texttt{AuthLayout}：认证页面布局组件，用于登录和注册页面
+    \end{itemize}
+  \item \textbf{页面层（View Layer）}：
+    \begin{itemize}
+      \item \texttt{DashboardView}：仪表盘页面，展示系统总体状态
+      \item \texttt{MonitorView}：实时监控页面，显示视频流和实时告警
+      \item \texttt{EventsView}：历史事件查询页面
+      \item \texttt{DevicesView}、\texttt{DriversView}：设备和驾驶员管理页面
+      \item \texttt{StatsView}：统计分析页面，包含数据可视化图表
+    \end{itemize}
+  \item \textbf{组件层（Component Layer）}：
+    \begin{itemize}
+      \item \texttt{MetricCard}：指标卡片组件，用于显示关键数据
+      \item \texttt{StatusChip}：状态芯片组件，显示设备或告警状态
+      \item \texttt{EnhancedVideoPlayer}：增强视频播放器组件，支持实时流显示
+    \end{itemize}
+  \item \textbf{状态管理层（State Management）}：
+    \begin{itemize}
+      \item \texttt{AuthStore}：用户认证状态管理，采用Pinia状态管理模式
+      \item \texttt{WebSocketManager}：WebSocket连接管理器，单例模式
+      \item \texttt{VideoStreamManager}：视频流管理器，处理多路视频流
+    \end{itemize}
+  \item \textbf{服务层（Service Layer）}：
+    \begin{itemize}
+      \item \texttt{ApiClient}：HTTP客户端，基于Axios封装
+      \item \texttt{AuthApi}、\texttt{DeviceApi}、\texttt{EventApi}等：按业务领域划分的API接口
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{后端服务架构设计}
+\begin{itemize}
+  \item \textbf{API控制层（Controller Layer）}：
+    \begin{itemize}
+      \item \texttt{AuthController}：用户认证控制器
+      \item \texttt{DeviceController}：设备管理控制器
+      \item \texttt{EventController}：事件数据控制器
+      \item \texttt{MonitorController}：实时监控控制器
+    \end{itemize}
+  \item \textbf{业务逻辑层（Service Layer）}：
+    \begin{itemize}
+      \item \texttt{AuthService}：认证业务逻辑
+      \item \texttt{EventAnalysisService}：事件分析服务
+      \item \texttt{WebSocketService}：实时通信服务
+    \end{itemize}
+  \item \textbf{数据访问层（Data Access Layer）}：
+    \begin{itemize}
+      \item \texttt{UserModel}、\texttt{DeviceModel}、\texttt{EventModel}：数据模型，基于SQLAlchemy ORM
+      \item \texttt{DatabaseManager}：数据库连接管理器
+    \end{itemize}
+\end{itemize}
+
 \subsubsection{设计模式应用关系}
 \begin{itemize}
-  \item \textbf{观察者模式}：\texttt{BehaviorAnalyzer} $\to$ \texttt{AlarmManager}, \texttt{DataUploader}
+  \item \textbf{观察者模式}：\texttt{BehaviorAnalyzer} $\to$ \texttt{AlarmManager}, \texttt{DataUploader}；\texttt{WebSocketManager} $\to$ Vue组件响应式更新
   \item \textbf{策略模式}：\texttt{BehaviorAnalyzer} $\to$ \texttt{BehaviorDetectionStrategy} $\to$ 具体策略实现
-  \item \textbf{单例模式}：\texttt{YOLODetector}、\texttt{FaceDetector}、\texttt{ConfigManager}
+  \item \textbf{单例模式}：\texttt{YOLODetector}、\texttt{FaceDetector}、\texttt{ConfigManager}、\texttt{WebSocketManager}
   \item \textbf{工厂模式}：\texttt{DetectorFactory} 管理检测器生命周期
+  \item \textbf{状态管理模式}：Pinia Store采用组合式API，支持响应式状态管理
+  \item \textbf{组件化模式}：Vue.js组件采用单文件组件（SFC）模式，实现关注点分离
 \end{itemize}
 
 \begin{figure}[h]
@@ -192,6 +250,48 @@
   \item \textbf{线程同步}：使用\texttt{threading.Lock}保证共享数据的线程安全
 \end{itemize}
 
+\subsubsection{Web端交互流程}
+以下时序图展示了Web管理端的主要交互流程：
+
+\begin{itemize}
+  \item \textbf{用户认证与初始化流程}：
+    \begin{enumerate}
+      \item 用户访问Web应用，Vue Router检查认证状态
+      \item 未认证用户被重定向到\texttt{LoginView}
+      \item 用户提交登录表单，\texttt{AuthStore}调用\texttt{auth\_api.login()}
+      \item 后端验证凭据，返回JWT Token
+      \item 前端存储Token并建立WebSocket连接\texttt{WebSocketManager.connect()}
+      \item 跳转到\texttt{DashboardView}，加载初始数据
+    \end{enumerate}
+  \item \textbf{实时监控流程}（WebSocket驱动）：
+    \begin{enumerate}
+      \item 管理员导航到\texttt{MonitorView}
+      \item 组件挂载时调用\texttt{monitor\_api.get\_video\_streams()}获取可用流
+      \item \texttt{VideoStreamManager}建立与车载设备的视频流连接
+      \item 并行处理两类实时数据：
+        \begin{itemize}
+          \item 视频流数据：通过WebRTC或RTMP显示在\texttt{EnhancedVideoPlayer}组件
+          \item 告警数据：通过WebSocket接收，触发\texttt{AlarmNotification}组件显示
+        \end{itemize}
+      \item 告警处理：管理员点击处理按钮，调用\texttt{monitor\_api.handle\_alert()}
+    \end{enumerate}
+  \item \textbf{历史数据查询流程}：
+    \begin{enumerate}
+      \item 管理员访问\texttt{EventsView}，设置查询条件（时间范围、设备、事件类型）
+      \item 前端构建查询参数，调用\texttt{event\_api.get\_events(params)}
+      \item 后端\texttt{EventController}处理查询，通过SQLAlchemy ORM检索数据库
+      \item 返回分页结果，前端使用Vuetify DataTable组件展示
+      \item 支持排序、筛选和导出功能
+    \end{enumerate}
+  \item \textbf{响应式状态同步}：
+    \begin{enumerate}
+      \item \texttt{WebSocketManager}接收服务器推送的状态更新
+      \item 基于事件类型分发到相应的Pinia Store
+      \item Store状态变更自动触发相关Vue组件的重新渲染
+      \item \texttt{StatusChip}和\texttt{MetricCard}组件实时反映最新状态
+    \end{enumerate}
+\end{itemize}
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/process_view.png}
@@ -202,7 +302,60 @@
 \subsection{开发视图}
 此视图展示了项目的代码组织结构（见于图4）和模块依赖关系。
 
+\subsubsection{前端项目结构}
+基于Vue.js的前端项目采用标准的现代JavaScript项目结构：
+
+\begin{lstlisting}[caption=前端项目目录结构]
+safepilot-frontend/
+├── public/                    # 静态资源
+│   └── favicon.ico
+├── src/                       # 源代码
+│   ├── api/                   # API接口层
+│   │   ├── client.ts          # Axios HTTP客户端配置
+│   │   └── index.ts           # API端点定义
+│   ├── components/            # 可复用组件
+│   │   ├── common/            # 通用组件
+│   │   │   ├── MetricCard.vue
+│   │   │   ├── StatusChip.vue
+│   │   │   └── EnhancedVideoPlayer.vue
+│   │   └── layouts/           # 布局组件
+│   │       ├── AppLayout.vue
+│   │       └── AuthLayout.vue
+│   ├── router/                # 路由配置
+│   │   └── index.ts           # Vue Router配置
+│   ├── stores/                # Pinia状态管理
+│   │   ├── auth.ts            # 认证状态
+│   │   └── counter.ts         # 示例状态
+│   ├── utils/                 # 工具类
+│   │   ├── WebSocketManager.ts
+│   │   └── VideoStreamManager.ts
+│   ├── views/                 # 页面组件
+│   │   ├── auth/              # 认证相关页面
+│   │   ├── dashboard/         # 仪表盘页面
+│   │   ├── devices/           # 设备管理页面
+│   │   ├── drivers/           # 驾驶员管理页面
+│   │   ├── events/            # 事件查询页面
+│   │   ├── monitor/           # 实时监控页面
+│   │   └── stats/             # 统计分析页面
+│   ├── plugins/               # Vue插件
+│   │   └── vuetify.ts         # Vuetify配置
+│   ├── App.vue                # 根组件
+│   └── main.ts                # 应用入口
+├── package.json               # 依赖配置
+├── vite.config.ts            # Vite构建配置
+└── tsconfig.json             # TypeScript配置
+\end{lstlisting}
+
 \subsubsection{模块依赖关系}
+\textbf{前端模块依赖}：
+\begin{itemize}
+  \item \texttt{main.ts} $\rightarrow$ \texttt{App.vue} $\rightarrow$ \texttt{router/index.ts}（应用启动链）
+  \item \texttt{views/*} $\rightarrow$ \texttt{components/common/*}（页面组件依赖通用组件）
+  \item \texttt{stores/*} $\leftarrow$ \texttt{views/*}（页面组件使用Pinia状态）
+  \item \texttt{api/*} $\leftarrow$ \texttt{stores/*}（状态管理调用API接口）
+  \item \texttt{utils/WebSocketManager.ts} $\leftarrow$ \texttt{stores/auth.ts}（WebSocket连接管理）
+\end{itemize}
+
 \textbf{客户端模块依赖}：
 \begin{itemize}
   \item \texttt{application.py} $\leftarrow$ 聚合所有组件，作为门面模式（Facade Pattern）
@@ -221,10 +374,21 @@
 
 \subsubsection{构建与部署流程}
 \begin{itemize}
+  \item \textbf{前端构建}：
+    \begin{itemize}
+      \item 开发环境：\texttt{npm run dev} 启动Vite开发服务器，支持热模块替换（HMR）
+      \item 生产构建：\texttt{npm run build} 执行TypeScript类型检查后构建优化的静态文件
+      \item 代码质量：\texttt{npm run lint} 执行ESLint检查，\texttt{npm run format} 格式化代码
+      \item 单元测试：\texttt{npm run test:unit} 执行Vitest测试套件
+    \end{itemize}
   \item \textbf{客户端打包}：使用PyInstaller生成可执行文件，内嵌模型权重
   \item \textbf{服务器部署}：基于Gunicorn + Nginx的生产环境部署
-  \item \textbf{前端构建}：Vue CLI构建为静态文件，由Nginx提供服务
-  \item \textbf{CI/CD}：预留GitHub Actions或Jenkins集成
+  \item \textbf{现代化部署}：
+    \begin{itemize}
+      \item Docker容器化：前后端分别构建Docker镜像
+      \item CI/CD集成：GitHub Actions自动化测试、构建和部署
+      \item CDN分发：静态资源通过CDN加速分发
+    \end{itemize}
 \end{itemize}
 
 \begin{figure}[h]
@@ -235,7 +399,76 @@
 \end{figure}
 
 \subsection{物理视图}
-此视图描述了系统的部署方式（见于图5）。
+此视图描述了系统的部署方式，包括传统部署和现代化容器部署两种方案。
+
+\subsubsection{传统部署架构}
+基于物理服务器或虚拟机的传统部署方式：
+
+\begin{itemize}
+  \item \textbf{车载设备层}：
+    \begin{itemize}
+      \item 硬件：普通PC/笔记本（4核CPU，8GB内存）+ USB摄像头
+      \item 软件：Python客户端程序，通过PyInstaller打包为可执行文件
+      \item 网络：4G/5G移动网络或Wi-Fi连接到云端服务器
+    \end{itemize}
+  \item \textbf{Web客户端层}：
+    \begin{itemize}
+      \item 硬件：管理员PC/笔记本/平板设备
+      \item 软件：现代Web浏览器（Chrome 90+，Firefox 88+，Safari 14+）
+      \item 网络：企业网络或公网接入云端服务器
+    \end{itemize}
+  \item \textbf{云端服务器层}：
+    \begin{itemize}
+      \item Web服务器：Nginx（反向代理 + 静态文件服务）
+      \item 应用服务器：Gunicorn + Flask（API服务 + WebSocket服务）
+      \item 数据库服务器：PostgreSQL（主从复制，读写分离）
+      \item 负载均衡：Nginx upstream（支持多应用服务器实例）
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{现代化容器部署架构}
+基于Docker容器的现代化部署方式，支持微服务和云原生：
+
+\begin{itemize}
+  \item \textbf{容器化组件}：
+    \begin{itemize}
+      \item \textbf{前端容器}：基于Node.js的Vite构建 + Nginx静态文件服务
+      \item \textbf{后端API容器}：Flask应用 + Gunicorn WSGI服务器
+      \item \textbf{WebSocket服务容器}：独立的Socket.IO服务，支持横向扩展
+      \item \textbf{数据库容器}：PostgreSQL官方镜像 + 数据卷持久化
+      \item \textbf{Redis容器}：用于Session存储和消息队列
+      \item \textbf{Nginx容器}：API网关 + 负载均衡 + SSL终结
+    \end{itemize}
+  \item \textbf{编排与部署}：
+    \begin{itemize}
+      \item \textbf{开发环境}：Docker Compose一键启动所有服务
+      \item \textbf{生产环境}：Kubernetes集群部署，支持自动伸缩
+      \item \textbf{CI/CD}：GitHub Actions自动构建Docker镜像并推送到镜像仓库
+    \end{itemize}
+  \item \textbf{监控与运维}：
+    \begin{itemize}
+      \item \textbf{日志收集}：ELK Stack（Elasticsearch + Logstash + Kibana）
+      \item \textbf{性能监控}：Prometheus + Grafana
+      \item \textbf{健康检查}：Kubernetes探针 + 自动重启机制
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{网络拓扑与通信协议}
+\begin{itemize}
+  \item \textbf{HTTPS/TLS 1.3}：所有Web通信使用加密连接，确保数据传输安全
+  \item \textbf{WebSocket Secure (WSS)}：实时数据推送使用加密WebSocket连接
+  \item \textbf{RESTful API}：标准HTTP方法进行CRUD操作，支持JWT认证
+  \item \textbf{CDN加速}：静态资源通过CloudFlare等CDN加速分发
+  \item \textbf{数据库连接}：使用连接池管理数据库连接，支持SSL加密
+\end{itemize}
+
+\subsubsection{可扩展性设计}
+\begin{itemize}
+  \item \textbf{水平扩展}：API服务器和WebSocket服务器支持多实例部署
+  \item \textbf{数据库扩展}：PostgreSQL支持读写分离、分库分表
+  \item \textbf{缓存策略}：Redis缓存热点数据，减少数据库查询压力
+  \item \textbf{消息队列}：使用Redis或RabbitMQ处理异步任务
+\end{itemize}
 
 \begin{figure}[h]
   \centering

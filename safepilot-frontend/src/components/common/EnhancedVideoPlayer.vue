@@ -19,8 +19,8 @@
       @click="$emit('click')"
     />
 
-    <!-- 加载状态覆盖层 -->
-    <div v-if="is_loading" class="loading-overlay">
+    <!-- 加载状态覆盖层 - 只在有真实URL时显示 -->
+    <div v-if="is_loading && props.stream_config.url" class="loading-overlay">
       <div class="loading-content">
         <v-progress-circular
           indeterminate
@@ -31,8 +31,8 @@
       </div>
     </div>
 
-    <!-- 错误状态覆盖层 -->
-    <div v-if="has_error" class="error-overlay">
+    <!-- 错误状态覆盖层 - 只在有真实URL时显示 -->
+    <div v-if="has_error && props.stream_config.url" class="error-overlay">
       <div class="error-content">
         <v-icon size="64" color="error">mdi-alert-circle</v-icon>
         <h3 class="text-h6 mt-3">连接失败</h3>
@@ -388,7 +388,6 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
 }
 
 .loading-content,
@@ -416,8 +415,7 @@ onUnmounted(() => {
 }
 
 .video-info-card {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.8);
   border-radius: 6px;
   padding: 8px 12px;
   color: white;

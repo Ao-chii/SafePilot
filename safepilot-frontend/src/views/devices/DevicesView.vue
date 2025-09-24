@@ -292,58 +292,397 @@
     </v-dialog>
 
     <!-- 设备详情对话框 -->
-    <v-dialog v-model="detail_dialog" max-width="700">
+    <v-dialog v-model="detail_dialog" max-width="1000">
       <v-card v-if="selected_device">
-        <v-card-title>设备详情</v-card-title>
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-2">mdi-cellphone-information</v-icon>
+          设备详情 - {{ selected_device.name }}
+        </v-card-title>
+        
         <v-card-text>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-list density="compact">
-                <v-list-item>
-                  <v-list-item-title>设备ID</v-list-item-title>
-                  <v-list-item-subtitle>{{ selected_device.device_id }}</v-list-item-subtitle>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>设备名称</v-list-item-title>
-                  <v-list-item-subtitle>{{ selected_device.name }}</v-list-item-subtitle>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>设备状态</v-list-item-title>
-                  <v-list-item-subtitle>
-                    <StatusChip
-                      :status="selected_device.is_active ? 'online' : 'offline'"
-                      :text="selected_device.is_active ? '在线' : '离线'"
-                      size="small"
+          <v-tabs v-model="detail_tab" color="primary">
+            <v-tab value="basic">基本信息</v-tab>
+            <v-tab value="performance">性能监控</v-tab>
+            <v-tab value="history">历史记录</v-tab>
+          </v-tabs>
+          
+          <v-card-text>
+            <v-window v-model="detail_tab">
+              <!-- 基本信息 -->
+              <v-window-item value="basic">
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-list density="compact">
+                      <v-list-item>
+                        <v-list-item-title>设备ID</v-list-item-title>
+                        <v-list-item-subtitle>{{ selected_device.device_id }}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-title>设备名称</v-list-item-title>
+                        <v-list-item-subtitle>{{ selected_device.name }}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-title>设备状态</v-list-item-title>
+                        <v-list-item-subtitle>
+                          <StatusChip
+                            :status="selected_device.is_active ? 'online' : 'offline'"
+                            :text="selected_device.is_active ? '在线' : '离线'"
+                            size="small"
+                          />
+                        </v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-title>信号强度</v-list-item-title>
+                        <v-list-item-subtitle>{{ selected_device.signal_strength || 0 }}%</v-list-item-subtitle>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-list density="compact">
+                      <v-list-item>
+                        <v-list-item-title>最后上线</v-list-item-title>
+                        <v-list-item-subtitle>{{ format_datetime(selected_device.last_seen) }}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-title>创建时间</v-list-item-title>
+                        <v-list-item-subtitle>{{ format_datetime(selected_device.created_at) }}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-title>设备描述</v-list-item-title>
+                        <v-list-item-subtitle>{{ selected_device.description || '无' }}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-title>固件版本</v-list-item-title>
+                        <v-list-item-subtitle>{{ selected_device.firmware_version || 'v1.0.0' }}</v-list-item-subtitle>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                </v-row>
+              </v-window-item>
+              
+              <!-- 性能监控 -->
+              <v-window-item value="performance">
+                <v-row class="mb-4">
+                  <v-col cols="12" sm="6" md="3">
+                    <MetricCard
+                      title="CPU使用率"
+                      :value="device_metrics.cpu_usage + '%'"
+                      subtitle="处理器负载"
+                      icon="mdi-chip"
+                      :icon-color="device_metrics.cpu_usage > 80 ? 'error' : 'info'"
                     />
-                  </v-list-item-subtitle>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>信号强度</v-list-item-title>
-                  <v-list-item-subtitle>{{ selected_device.signal_strength || 0 }}%</v-list-item-subtitle>
-                </v-list-item>
-              </v-list>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-list density="compact">
-                <v-list-item>
-                  <v-list-item-title>最后上线</v-list-item-title>
-                  <v-list-item-subtitle>{{ format_datetime(selected_device.last_seen) }}</v-list-item-subtitle>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>创建时间</v-list-item-title>
-                  <v-list-item-subtitle>{{ format_datetime(selected_device.created_at) }}</v-list-item-subtitle>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>设备描述</v-list-item-title>
-                  <v-list-item-subtitle>{{ selected_device.description || '无' }}</v-list-item-subtitle>
-                </v-list-item>
-              </v-list>
-            </v-col>
-          </v-row>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <MetricCard
+                      title="内存使用率"
+                      :value="device_metrics.memory_usage + '%'"
+                      subtitle="RAM占用"
+                      icon="mdi-memory"
+                      :icon-color="device_metrics.memory_usage > 85 ? 'warning' : 'success'"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <MetricCard
+                      title="存储使用率"
+                      :value="device_metrics.disk_usage + '%'"
+                      subtitle="磁盘空间"
+                      icon="mdi-harddisk"
+                      :icon-color="device_metrics.disk_usage > 90 ? 'error' : 'primary'"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <MetricCard
+                      title="网络状态"
+                      :value="device_metrics.network_status"
+                      subtitle="连接质量"
+                      icon="mdi-wifi"
+                      icon-color="success"
+                    />
+                  </v-col>
+                </v-row>
+                
+                <v-row>
+                  <!-- CPU使用率趋势 -->
+                  <v-col cols="12" md="6">
+                    <v-card elevation="1" class="performance-chart">
+                      <v-card-title>CPU使用率趋势</v-card-title>
+                      <v-card-text>
+                        <div class="chart-container">
+                          <LineChart 
+                            :data="cpu_trend_data"
+                            label="CPU使用率"
+                            color="#93C5FD"
+                          />
+                        </div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  
+                  <!-- 内存使用率趋势 -->
+                  <v-col cols="12" md="6">
+                    <v-card elevation="1" class="performance-chart">
+                      <v-card-title>内存使用率趋势</v-card-title>
+                      <v-card-text>
+                        <div class="chart-container">
+                          <LineChart 
+                            :data="memory_trend_data"
+                            label="内存使用率"
+                            color="#6EE7B7"
+                          />
+                        </div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  
+                  <!-- 网络流量 -->
+                  <v-col cols="12">
+                    <v-card elevation="1" class="performance-chart">
+                      <v-card-title>网络流量统计</v-card-title>
+                      <v-card-text>
+                        <div class="chart-container">
+                          <BarChart 
+                            :data="network_traffic_data"
+                            title="流量 (MB)"
+                            color="#A096A5"
+                          />
+                        </div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-window-item>
+              
+              <!-- 历史记录 -->
+              <v-window-item value="history">
+                <v-list class="device-history">
+                  <v-list-item
+                    v-for="(record, index) in device_history"
+                    :key="index"
+                    class="history-item"
+                  >
+                    <template #prepend>
+                      <v-avatar 
+                        :color="get_history_color(record.type)"
+                        size="32"
+                      >
+                        <v-icon color="white" size="small">{{ get_history_icon(record.type) }}</v-icon>
+                      </v-avatar>
+                    </template>
+                    
+                    <v-list-item-title>{{ record.event }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                      <div>{{ record.details }}</div>
+                      <div class="text-caption">{{ format_datetime(record.timestamp) }}</div>
+                    </v-list-item-subtitle>
+                    
+                    <template #append>
+                      <v-chip
+                        :color="get_history_color(record.type)"
+                        size="small"
+                        variant="outlined"
+                      >
+                        {{ record.type }}
+                      </v-chip>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </v-window-item>
+            </v-window>
+          </v-card-text>
         </v-card-text>
+        
         <v-card-actions>
           <v-spacer />
           <v-btn @click="detail_dialog = false" text>关闭</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 远程配置对话框 -->
+    <v-dialog v-model="config_dialog" max-width="800">
+      <v-card v-if="selected_device">
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-2">mdi-cog</v-icon>
+          设备远程配置 - {{ selected_device.name }}
+        </v-card-title>
+        
+        <v-card-text>
+          <v-tabs v-model="config_tab" color="primary">
+            <v-tab value="detection">检测配置</v-tab>
+            <v-tab value="network">网络配置</v-tab>
+            <v-tab value="system">系统配置</v-tab>
+          </v-tabs>
+          
+          <v-card-text>
+            <v-window v-model="config_tab">
+              <!-- 检测配置 -->
+              <v-window-item value="detection">
+                <v-form v-model="config_form_valid">
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.detection.sensitivity"
+                        label="检测灵敏度 (%)"
+                        type="number"
+                        :rules="[v => v >= 0 && v <= 100 || '请输入0-100之间的数值']"
+                        variant="outlined"
+                        suffix="%"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.detection.detection_interval"
+                        label="检测间隔 (秒)"
+                        type="number"
+                        :rules="[v => v > 0 || '请输入大于0的数值']"
+                        variant="outlined"
+                        suffix="秒"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-switch
+                        v-model="device_config.detection.fatigue_detection"
+                        label="疲劳检测"
+                        color="primary"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-switch
+                        v-model="device_config.detection.distraction_detection"
+                        label="分心检测"
+                        color="primary"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-switch
+                        v-model="device_config.detection.phone_detection"
+                        label="打电话检测"
+                        color="primary"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-switch
+                        v-model="device_config.detection.smoking_detection"
+                        label="抽烟检测"
+                        color="primary"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-window-item>
+              
+              <!-- 网络配置 -->
+              <v-window-item value="network">
+                <v-form>
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.network.server_url"
+                        label="服务器地址"
+                        :rules="[v => !!v || '请输入服务器地址']"
+                        variant="outlined"
+                        prepend-inner-icon="mdi-server"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.network.upload_interval"
+                        label="上传间隔 (秒)"
+                        type="number"
+                        :rules="[v => v > 0 || '请输入大于0的数值']"
+                        variant="outlined"
+                        suffix="秒"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.network.heartbeat_interval"
+                        label="心跳间隔 (秒)"
+                        type="number"
+                        variant="outlined"
+                        suffix="秒"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.network.retry_times"
+                        label="重试次数"
+                        type="number"
+                        variant="outlined"
+                      />
+                    </v-col>
+                    <v-col cols="12">
+                      <v-switch
+                        v-model="device_config.network.auto_reconnect"
+                        label="自动重连"
+                        color="primary"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-window-item>
+              
+              <!-- 系统配置 -->
+              <v-window-item value="system">
+                <v-form>
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-select
+                        v-model="device_config.system.log_level"
+                        label="日志级别"
+                        :items="log_levels"
+                        variant="outlined"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="device_config.system.storage_days"
+                        label="数据保存天数"
+                        type="number"
+                        variant="outlined"
+                        suffix="天"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-switch
+                        v-model="device_config.system.auto_update"
+                        label="自动更新"
+                        color="primary"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-switch
+                        v-model="device_config.system.debug_mode"
+                        label="调试模式"
+                        color="warning"
+                      />
+                    </v-col>
+                    <v-col cols="12">
+                      <v-textarea
+                        v-model="device_config.system.custom_params"
+                        label="自定义参数 (JSON格式)"
+                        variant="outlined"
+                        rows="4"
+                        placeholder='{"key": "value"}'
+                      />
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-window-item>
+            </v-window>
+          </v-card-text>
+        </v-card-text>
+        
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click="config_dialog = false" text>取消</v-btn>
+          <v-btn
+            @click="apply_config"
+            :loading="applying_config"
+            color="primary"
+          >
+            应用配置
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -376,24 +715,31 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { device_api } from '../../api'
 import StatusChip from '../../components/common/StatusChip.vue'
 import MetricCard from '../../components/common/MetricCard.vue'
+import LineChart from '../../components/common/LineChart.vue'
+import BarChart from '../../components/common/BarChart.vue'
 
 // 状态管理
 const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
+const applying_config = ref(false)
 const devices = ref<any[]>([])
 const search_text = ref('')
 const status_filter = ref<boolean | null>(null)
 const device_dialog = ref(false)
 const detail_dialog = ref(false)
+const config_dialog = ref(false)
 const delete_dialog = ref(false)
 const editing_device = ref(false)
 const device_to_delete = ref<any>(null)
 const selected_device = ref<any>(null)
 const form_ref = ref()
 const form_valid = ref(false)
+const config_form_valid = ref(false)
 const auto_refresh = ref(false)
 const refresh_interval = ref<number | null>(null)
+const detail_tab = ref('basic')
+const config_tab = ref('detection')
 
 // 设备表单
 const device_form = reactive({
@@ -402,6 +748,61 @@ const device_form = reactive({
   description: '',
   is_active: true,
 })
+
+// 设备配置
+const device_config = reactive({
+  detection: {
+    sensitivity: 75,
+    detection_interval: 3,
+    fatigue_detection: true,
+    distraction_detection: true,
+    phone_detection: true,
+    smoking_detection: false,
+  },
+  network: {
+    server_url: 'https://api.safepilot.com',
+    upload_interval: 30,
+    heartbeat_interval: 60,
+    retry_times: 3,
+    auto_reconnect: true,
+  },
+  system: {
+    log_level: 'INFO',
+    storage_days: 30,
+    auto_update: true,
+    debug_mode: false,
+    custom_params: '{}',
+  }
+})
+
+// 设备性能数据
+const device_metrics = reactive({
+  cpu_usage: 0,
+  memory_usage: 0,
+  disk_usage: 0,
+  network_status: '良好',
+})
+
+// 性能趋势数据
+const cpu_trend_data = ref<Array<{date: string, count: number}>>([])
+const memory_trend_data = ref<Array<{date: string, count: number}>>([])
+const network_traffic_data = ref<Array<{label: string, value: number}>>([])
+
+// 设备历史记录
+const device_history = ref<Array<{
+  type: string
+  event: string
+  details: string
+  timestamp: string
+}>>([])
+
+// 配置选项
+const log_levels = [
+  { title: 'DEBUG', value: 'DEBUG' },
+  { title: 'INFO', value: 'INFO' },
+  { title: 'WARNING', value: 'WARNING' },
+  { title: 'ERROR', value: 'ERROR' },
+]
 
 // 状态筛选选项
 const status_options = [
@@ -477,7 +878,7 @@ const load_devices = async () => {
   loading.value = true
   try {
     const response = await device_api.get_devices()
-    devices.value = response.data.devices || []
+    devices.value = response.data || []
     
     // 模拟一些设备状态数据（实际应该从API获取）
     devices.value = devices.value.map(device => ({
@@ -557,12 +958,134 @@ const save_device = async () => {
 
 const view_device_detail = (device: any) => {
   selected_device.value = device
+  load_device_performance(device)
+  detail_tab.value = 'basic'
   detail_dialog.value = true
 }
 
 const remote_config = (device: any) => {
-  // TODO: 实现远程配置功能
-  console.log('远程配置设备:', device.device_id)
+  selected_device.value = device
+  // 加载设备当前配置
+  load_device_config(device.device_id)
+  config_dialog.value = true
+}
+
+// 加载设备配置（模拟数据）
+const load_device_config = async (device_id: string) => {
+  // 在实际项目中这里应该调用API获取设备配置
+  console.log('加载设备配置:', device_id)
+  // 这里使用默认配置
+}
+
+// 应用设备配置
+const apply_config = async () => {
+  if (!selected_device.value) return
+  
+  applying_config.value = true
+  try {
+    // 在实际项目中这里应该调用API更新设备配置
+    console.log('应用设备配置:', {
+      device_id: selected_device.value.device_id,
+      config: device_config
+    })
+    
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    config_dialog.value = false
+    console.log('设备配置更新成功')
+  } catch (error) {
+    console.error('应用设备配置失败:', error)
+  } finally {
+    applying_config.value = false
+  }
+}
+
+// 历史记录相关函数
+const get_history_color = (type: string): string => {
+  const colorMap: Record<string, string> = {
+    '上线': 'success',
+    '离线': 'error', 
+    '配置': 'primary',
+    '告警': 'warning',
+    '更新': 'info'
+  }
+  return colorMap[type] || 'grey'
+}
+
+const get_history_icon = (type: string): string => {
+  const iconMap: Record<string, string> = {
+    '上线': 'mdi-power-plug',
+    '离线': 'mdi-power-plug-off',
+    '配置': 'mdi-cog',
+    '告警': 'mdi-alert',
+    '更新': 'mdi-update'
+  }
+  return iconMap[type] || 'mdi-information'
+}
+
+// 加载设备性能数据（模拟）
+const load_device_performance = (device: any) => {
+  // 模拟设备性能数据
+  device_metrics.cpu_usage = Math.floor(Math.random() * 100)
+  device_metrics.memory_usage = Math.floor(Math.random() * 100)  
+  device_metrics.disk_usage = Math.floor(Math.random() * 100)
+  device_metrics.network_status = device.is_active ? '良好' : '断开'
+  
+  // 生成趋势数据
+  const now = new Date()
+  cpu_trend_data.value = []
+  memory_trend_data.value = []
+  
+  for (let i = 23; i >= 0; i--) {
+    const time = new Date(now.getTime() - i * 60 * 60 * 1000)
+    const timeStr = time.toISOString()
+    
+    cpu_trend_data.value.push({
+      date: timeStr,
+      count: Math.floor(Math.random() * 100)
+    })
+    
+    memory_trend_data.value.push({
+      date: timeStr,
+      count: Math.floor(Math.random() * 100)
+    })
+  }
+  
+  // 网络流量数据
+  network_traffic_data.value = [
+    { label: '上传', value: Math.floor(Math.random() * 1000) },
+    { label: '下载', value: Math.floor(Math.random() * 500) },
+    { label: '心跳', value: Math.floor(Math.random() * 50) },
+  ]
+  
+  // 历史记录
+  device_history.value = [
+    {
+      type: '上线',
+      event: '设备上线',
+      details: '设备重新连接到服务器',
+      timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString()
+    },
+    {
+      type: '配置',
+      event: '配置更新',
+      details: '检测灵敏度调整为75%',
+      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString()
+    },
+    {
+      type: '告警',
+      event: '高CPU使用率',
+      details: 'CPU使用率超过90%，持续5分钟',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      type: '更新',
+      event: '固件更新',
+      details: '固件版本更新到v1.2.1',
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    }
+  ]
 }
 
 const delete_device = (device: any) => {
@@ -681,5 +1204,38 @@ h1 {
 
 :deep(.v-data-table__tr:hover) {
   background: rgba(231, 209, 187, 0.05) !important;
+}
+
+/* 性能图表样式 */
+.performance-chart {
+  background: rgba(37, 40, 65, 0.4) !important;
+  border: 1px solid rgba(231, 209, 187, 0.1);
+}
+
+.chart-container {
+  min-height: 200px;
+  padding: 8px;
+  background: rgba(61, 63, 91, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.device-history {
+  background: transparent;
+}
+
+.history-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(160, 150, 165, 0.1);
+  transition: all 200ms ease;
+}
+
+.history-item:hover {
+  background: rgba(231, 209, 187, 0.05);
+  border-radius: 8px;
+}
+
+.history-item:last-child {
+  border-bottom: none;
 }
 </style>

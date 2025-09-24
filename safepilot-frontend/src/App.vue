@@ -92,7 +92,6 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  overflow: hidden;
 }
 
 .loading-overlay::before {
@@ -253,14 +252,14 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
 }
 
-/* 确保在所有设备上都有正确的高度 */
+/* 确保在所有设备上都有正确的高度和滚动 */
 html, body {
-  height: 100%;
-  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 只禁用水平滚动 */
 }
 
 #app {
-  height: 100%;
-  min-height: 100vh;
+  min-height: 100vh; /* 使用 min-height 而不是固定 height */
 }
 </style>

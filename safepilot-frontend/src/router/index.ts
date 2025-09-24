@@ -15,6 +15,7 @@ import DashboardView from '../views/dashboard/DashboardView.vue'
 import MonitorView from '../views/monitor/MonitorView.vue'
 import EventsView from '../views/events/EventsView.vue'
 import DriversView from '../views/drivers/DriversView.vue'
+import DriverDetailView from '../views/drivers/DriverDetailView.vue'
 import DevicesView from '../views/devices/DevicesView.vue'
 import StatsView from '../views/stats/StatsView.vue'
 import ProfileView from '../views/ProfileView.vue'
@@ -70,6 +71,11 @@ const router = createRouter({
                     path: 'drivers',
                     name: 'Drivers',
                     component: DriversView,
+                },
+                {
+                    path: 'drivers/:id',
+                    name: 'DriverDetail',
+                    component: DriverDetailView,
                 },
                 {
                     path: 'devices',

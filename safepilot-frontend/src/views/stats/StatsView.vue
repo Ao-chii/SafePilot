@@ -136,36 +136,10 @@
               <p class="text-body-2 mt-2">暂无数据</p>
             </div>
             <div v-else class="chart-container">
-              <!-- 这里应该是Chart.js或其他图表库的饼图 -->
-              <!-- 暂时用简单的数据列表代替 -->
-              <div class="simple-pie-chart">
-                <div 
-                  v-for="(item, index) in event_type_distribution" 
-                  :key="item.type"
-                  class="pie-item mb-3"
-                >
-                  <div class="d-flex align-center justify-space-between">
-                    <div class="d-flex align-center">
-                      <div 
-                        class="color-indicator mr-3"
-                        :style="{ backgroundColor: pie_colors[index % pie_colors.length] }"
-                      ></div>
-                      <span>{{ item.type }}</span>
-                    </div>
-                    <div class="text-right">
-                      <div class="font-weight-bold">{{ item.count }}</div>
-                      <div class="text-caption text-grey-darken-2">{{ item.percentage }}%</div>
-                    </div>
-                  </div>
-                  <v-progress-linear
-                    :model-value="item.percentage"
-                    :color="pie_colors[index % pie_colors.length]"
-                    height="4"
-                    rounded
-                    class="mt-1"
-                  />
-                </div>
-              </div>
+              <PieChart 
+                :data="event_type_distribution" 
+                :colors="pie_colors"
+              />
             </div>
           </v-card-text>
         </v-card>
@@ -188,25 +162,11 @@
               <p class="text-body-2 mt-2">暂无趋势数据</p>
             </div>
             <div v-else class="chart-container">
-              <!-- 简化的趋势图 -->
-              <div class="simple-line-chart">
-                <div 
-                  v-for="item in time_trend_data" 
-                  :key="item.date"
-                  class="trend-item mb-2"
-                >
-                  <div class="d-flex align-center justify-space-between mb-1">
-                    <span class="text-caption">{{ format_chart_date(item.date) }}</span>
-                    <span class="font-weight-bold">{{ item.count }}</span>
-                  </div>
-                  <v-progress-linear
-                    :model-value="(item.count / max_daily_count) * 100"
-                    color="success"
-                    height="6"
-                    rounded
-                  />
-                </div>
-              </div>
+              <LineChart 
+                :data="time_trend_data"
+                label="事件数量"
+                color="#6EE7B7"
+              />
             </div>
           </v-card-text>
         </v-card>
@@ -302,6 +262,35 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- 新增柱状图：设备效率可视化 -->
+    <v-row class="mt-6">
+      <v-col cols="12">
+        <v-card elevation="2">
+          <v-card-title class="d-flex align-center justify-space-between">
+            <span>设备效率分析</span>
+            <v-chip size="small" color="info">柱状图</v-chip>
+          </v-card-title>
+          <v-card-text>
+            <div v-if="loading" class="text-center py-8">
+              <v-progress-circular indeterminate color="primary" />
+              <p class="text-body-2 mt-2">加载效率数据...</p>
+            </div>
+            <div v-else-if="device_efficiency_chart_data.length === 0" class="text-center py-8">
+              <v-icon size="48" color="grey-lighten-1">mdi-chart-bar</v-icon>
+              <p class="text-body-2 mt-2">暂无设备数据</p>
+            </div>
+            <div v-else class="chart-container">
+              <BarChart 
+                :data="device_efficiency_chart_data"
+                title="效率百分比"
+                color="#A096A5"
+              />
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -309,6 +298,9 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { event_api, driver_api, device_api } from '../../api'
 import MetricCard from '../../components/common/MetricCard.vue'
+import PieChart from '../../components/common/PieChart.vue'
+import LineChart from '../../components/common/LineChart.vue'
+import BarChart from '../../components/common/BarChart.vue'
 
 // 状态管理
 const loading = ref(false)
@@ -355,6 +347,14 @@ const pie_colors = [
 // 计算属性
 const max_daily_count = computed(() => {
   return Math.max(...time_trend_data.value.map(item => item.count), 1)
+})
+
+// 设备效率柱状图数据
+const device_efficiency_chart_data = computed(() => {
+  return device_efficiency.value.map(device => ({
+    label: device.name,
+    value: device.efficiency
+  }))
 })
 
 // 工具函数
@@ -584,42 +584,11 @@ onMounted(() => {
 /* 图表容器样式优化 */
 .chart-container {
   min-height: 300px;
-  padding: 16px 0;
+  padding: 16px;
   background: rgba(61, 63, 91, 0.3);
   border-radius: 12px;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(231, 209, 187, 0.1);
-}
-
-.simple-pie-chart,
-.simple-line-chart {
-  height: 100%;
-}
-
-.color-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(231, 209, 187, 0.3);
-}
-
-.pie-item {
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(160, 150, 165, 0.15);
-  transition: all 200ms ease;
-}
-
-.pie-item:hover {
-  background: rgba(231, 209, 187, 0.05);
-  border-radius: 8px;
-}
-
-.pie-item:last-child {
-  border-bottom: none;
-}
-
-.trend-item {
-  padding: 4px 0;
 }
 
 .ranking-item {
