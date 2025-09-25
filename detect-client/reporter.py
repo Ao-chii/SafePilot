@@ -33,6 +33,7 @@ class Reporter:
         self.config = config.get_server_config()
         self.last_report_time = {}  # 记录上次上报每种行为的时间，防止频繁上报
         self.report_interval = self.config.get('report_interval', 60)  # 默认60秒
+        self.device_id=config.get_camera_config().get('device_id', '1')
         
         # 检查报警音文件是否存在
         self.alarm_sound_path = "alarm.wav"
@@ -111,7 +112,7 @@ class Reporter:
             server_event["details"] = event_dict["details"]
             
         payload = {
-            "device_id": "1",
+            "device_id": self.device_id,
             "events": [server_event]
         }
         

@@ -64,3 +64,7 @@ class Config:
     def get_server_config(self):
         """获取服务器配置"""
         return self._config.get('server', {})
+    
+    def get_driver_config(self):
+        """获取司机配置"""
+        return self._config.get('driver', {})

@@ -6,6 +6,7 @@
 from enum import Enum
 import time
 import numpy as np
+from config import Config
 
 
 class EventLevel(Enum):
@@ -66,7 +67,7 @@ class BehaviorEvent:
     表示检测到的一个行为事件
     """
     
-    def __init__(self, event_type,confidence, timestamp=None, driver_id=1, details=None):
+    def __init__(self, event_type,confidence, timestamp=None, details=None):
         """
         初始化行为事件
         
@@ -81,8 +82,8 @@ class BehaviorEvent:
         self.type = event_type
         self.confidence = confidence
         self.timestamp = timestamp if timestamp is not None else time.time()
-        self.driver_id = driver_id
         self.details = details if details is not None else {}
+        self.driver_id=Config().get_driver_config().get('driver_id', 1)
     
     def __str__(self):
         """

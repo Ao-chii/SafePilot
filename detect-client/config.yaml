@@ -2,6 +2,7 @@ camera:
   source: 0
   width: 640
   height: 480
+  device_id: 2
 
 yolo:
   model_path: "yolo11n.pt"
@@ -28,3 +29,10 @@ server:
   api_key: "your-api-key-here"
   timeout_seconds: 5
   report_interval: 60  # 同一种行为60秒内只上报一次
+
+driver:
+  # name: "Ja Luming"
+  # driver_id: 1
+
+  name: "Zhong Zhenyu"
+  driver_id: 2

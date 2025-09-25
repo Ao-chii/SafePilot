@@ -109,7 +109,6 @@ class DrowsinessDetector(BaseDetector):
                 # 检测到严重疲劳
                 confidence = round(max(perclos, 0.5), 2)  # 确保最小置信度，并保留两位小数
                 event = BehaviorEvent(
-                    driver_id=1,
                     event_type=DangerousBehavior.SEVERE_DROWSINESS,
                     confidence=confidence,
                     timestamp=time.time(),

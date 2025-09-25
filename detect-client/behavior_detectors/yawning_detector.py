@@ -102,7 +102,6 @@ class YawningDetector(BaseDetector):
                 # 检测到打哈欠
                 confidence = round(max(yawn_ratio, 0.6), 2)  # 确保最小置信度，并保留两位小数
                 event = BehaviorEvent(
-                    driver_id=1,
                     event_type=DangerousBehavior.YAWNING,
                     confidence=confidence,
                     timestamp=time.time(),
