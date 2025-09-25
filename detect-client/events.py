@@ -51,6 +51,7 @@ class EventTypeToString:
         DangerousBehavior.PHONE_READING:"使用手机",
         DangerousBehavior.SEVERE_DROWSINESS:"疲劳驾驶",
         DangerousBehavior.YAWNING:"疲劳驾驶",
+        WarningBehavior.EATING_DRINKING:"饮食",
         
     }
     def get_event_type_string(self,event_type):

@@ -6,7 +6,7 @@ camera:
 yolo:
   model_path: "yolo11n.pt"
   confidence_threshold: 0.5
-  classes_to_detect: [0, 67, 77]  # 0: person, 67: cell phone, 77: bottle
+  classes_to_detect: [0, 67, 39, 41]  # 0: person, 67: cell phone, 39: bottle, 41: cup
 
 mediapipe:
   static_image_mode: False

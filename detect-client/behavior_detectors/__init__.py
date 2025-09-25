@@ -7,5 +7,6 @@ from .drowsiness_detector import DrowsinessDetector
 from .phone_usage_detector import PhoneUsageDetector
 from .hands_off_wheel_detector import HandsOffWheelDetector
 from .yawning_detector import YawningDetector
+from .drinking_detector import DrinkingDetector
 
-__all__ = ['BaseDetector', 'DrowsinessDetector', 'PhoneUsageDetector', 'HandsOffWheelDetector', 'YawningDetector']
+__all__ = ['BaseDetector', 'DrowsinessDetector', 'PhoneUsageDetector', 'HandsOffWheelDetector', 'YawningDetector', 'DrinkingDetector']
