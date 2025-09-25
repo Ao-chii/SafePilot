@@ -41,5 +41,6 @@ def init_db():
 
 if __name__ == '__main__':
     # 初始化数据库
-    init_db()
+    with app.app_context():
+        db.create_all()
     app.run()

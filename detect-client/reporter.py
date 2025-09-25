@@ -3,6 +3,8 @@ import json
 import threading
 import time
 import os
+import cv2
+import base64
 from events import EventLevel, EventTypeToString
 from datetime import datetime, timedelta, timezone
 
@@ -41,12 +43,13 @@ class Reporter:
         # 添加音频播放状态跟踪
         self.is_playing_alarm = False
     
-    def handle_events(self, events):
+    def handle_events(self, events, frame):
         """
         处理事件列表
         
         Args:
             events (list): 行为事件列表
+            frame (numpy.ndarray): 当前视频帧
         """
         for event in events:
             print(f"检测到行为事件: {event}")
@@ -56,13 +59,9 @@ class Reporter:
                 threading.Thread(target=self._play_alarm, daemon=True).start()
                 
             # 2. 上报服务器（在非阻塞线程中）
-            threading.Thread(target=self._report_to_server, args=(event,), daemon=True).start()
-            # self._report_to_server(event)
+            threading.Thread(target=self._report_to_server, args=(event, frame), daemon=True).start()
             self._print_to_screen(event)
-            
-            # 示例：只打印日志
-            # print(f"警告事件: {event}")
-    
+
     def _play_alarm(self):
         """
         播放警报音
@@ -75,56 +74,49 @@ class Reporter:
             print(f"播放报警音失败: {e}")
         finally:
             self.is_playing_alarm = False
-    
-    def _report_to_server(self, event):
+
+    def _report_to_server(self, event, frame):
         """
         上报事件到服务器
         
         Args:
             event (BehaviorEvent): 行为事件
+            frame (numpy.ndarray): 当前视频帧
         """
-        # 防频繁上报：同一种行为在指定时间间隔内只上报一次
         behavior_key = f"{event.type.__class__.__name__}_{event.type.name}"
         current_time = time.time()
         
         if behavior_key in self.last_report_time:
             if current_time - self.last_report_time[behavior_key] < self.report_interval:
-                # 时间间隔未到，不重复上报
                 return
         
-        # 准备上报数据，按照服务器要求的格式
-        events_data = []
-        event_dict = event.to_dict()
+        _, img_encoded = cv2.imencode('.jpg', frame)
+        img_base64 = base64.b64encode(img_encoded).decode('utf-8')
         
-        # 创建 EventTypeToString 实例
+        event_dict = event.to_dict()
         event_type_converter = EventTypeToString()
         
-        # 将UTC时间戳转换为北京时间
         utc_time = datetime.fromtimestamp(event_dict["timestamp"], tz=timezone.utc)
         beijing_time = utc_time + timedelta(hours=8)
         
-        # 构造符合服务器要求的事件数据
         server_event = {
             "driver_id": event_dict["driver_id"],
-            "event_type": event_type_converter.get_event_type_string(event.type),  # 使用行为类型的名称作为事件类型
+            "event_type": event_type_converter.get_event_type_string(event.type),
             "confidence": event_dict["confidence"],
-            "timestamp": beijing_time.isoformat()  # 使用北京时间
+            "timestamp": beijing_time.isoformat(),
+            "image": img_base64
         }
         
-        # 如果有详细信息，则添加
         if "details" in event_dict and event_dict["details"]:
             server_event["details"] = event_dict["details"]
             
-        events_data.append(server_event)
-        
         payload = {
-            "device_id": "1",  # 设备ID，应该从配置中获取
-            "events": events_data
+            "device_id": "1",
+            "events": [server_event]
         }
         
         headers = {
             "Content-Type": "application/json",
-            # "X-API-Key": self.config.get('api_key', '')
         }
         
         api_endpoint = self.config.get('api_endpoint', '')
@@ -135,12 +127,12 @@ class Reporter:
         try:
             response = requests.post(
                 api_endpoint,
-                json=payload,  # 使用json参数自动处理序列化
+                json=payload,
                 headers=headers,
                 timeout=self.config.get('timeout_seconds', 5)
             )
             
-            if response.status_code in [200, 201]:  # 接受200和201状态码
+            if response.status_code in [200, 201]:
                 print(f"成功上报 {behavior_key} 到服务器")
                 self.last_report_time[behavior_key] = current_time
             else:

@@ -67,6 +67,7 @@ def get_events():
             'confidence': float(event.confidence) if event.confidence else None,
             'timestamp': event.timestamp.isoformat() if event.timestamp else None,
             'details': event.details,
+            'image': event.image,
             'created_at': event.created_at.isoformat() if event.created_at else None
         }
         result.append(event_data)
@@ -92,6 +93,7 @@ def get_event(event_id):
         'confidence': float(event.confidence) if event.confidence else None,
         'timestamp': event.timestamp.isoformat() if event.timestamp else None,
         'details': event.details,
+        'image': event.image,
         'created_at': event.created_at.isoformat() if event.created_at else None
     }
     
@@ -145,7 +147,8 @@ def create_events():
             event_type=event_data['event_type'],
             confidence=confidence,
             timestamp=timestamp,
-            details=event_data.get('details')
+            details=event_data.get('details'),
+            image=event_data.get('image')
         )
         
         db.session.add(event)
@@ -169,6 +172,7 @@ def create_events():
             'confidence': float(event.confidence) if event.confidence else None,
             'timestamp': event.timestamp.isoformat() if event.timestamp else None,
             'details': event.details,
+            'image': event.image,
             'created_at': event.created_at.isoformat() if event.created_at else None
         }
         result.append(event_data)

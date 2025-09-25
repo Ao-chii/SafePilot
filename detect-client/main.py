@@ -82,7 +82,7 @@ def main():
             
             # 处理事件（报警和上报）
             if events:
-                reporter.handle_events(events)
+                reporter.handle_events(events, annotated_frame)
             
             # 显示结果（可选）
             cv2.imshow('Driver Monitoring', annotated_frame)

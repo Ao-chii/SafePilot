@@ -85,6 +85,7 @@ class Event(db.Model):
     confidence = db.Column(db.Numeric(3, 2), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
     details = db.Column(db.JSON)
+    image = db.Column(db.Text, nullable=True)  # 新增图片字段
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # 关系
