@@ -1,8 +1,0 @@
-# SafePilot 服务器依赖包
-# 根据需求文档和架构设计文档整理
-
-# Flask Web框架
-flask            # Web框架
-flask-cors          # 跨域支持
-flask-jwt-extended   # JWT认证
-flask-socketio       # 实时通信
