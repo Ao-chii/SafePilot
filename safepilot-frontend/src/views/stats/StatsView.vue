@@ -464,7 +464,7 @@ const load_time_trend = async () => {
     
     // 按日期分组统计
     const dateCount = events.reduce((acc: any, event: any) => {
-      const date = new Date(event.timestamp).toISOString().split('T')[0]
+      const date = new Date(event.timestamp).toLocaleDateString('zh-CN')
       acc[date] = (acc[date] || 0) + 1
       return acc
     }, {})
