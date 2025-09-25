@@ -105,7 +105,7 @@
     
     <!-- 主内容区域 -->
     <v-main>
-      <v-container fluid class="pa-4">
+      <v-container fluid class="pa-4 full-width-container">
         <transition
           name="page-transition"
           mode="out-in"
@@ -234,6 +234,12 @@ const handle_logout = () => {
 
 :deep(.v-main) {
   background: linear-gradient(135deg, #151931 0%, #252841 100%);
+  overflow-y: auto;
+}
+
+.full-width-container {
+  width: 100%;
+  max-width: 100%;
 }
 
 .nav-header {
