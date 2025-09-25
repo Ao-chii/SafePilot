@@ -31,8 +31,8 @@ server:
   report_interval: 60  # 同一种行为60秒内只上报一次
 
 driver:
-  # name: "Ja Luming"
-  # driver_id: 1
+  name: "Ja Luming"
+  driver_id: 1
 
-  name: "Zhong Zhenyu"
-  driver_id: 2
+  # name: "Zhong Zhenyu"
+  # driver_id: 2

@@ -68,7 +68,7 @@ class DrinkingDetector(BaseDetector):
             frame: 视频帧（可选，用于显示检测信息）
         """
         # 检查是否检测到水杯
-        bottle_detections = [det for det in yolo_detections if det['class_id'] == 39 or det['class_id']==41]  # 77是bottle类别ID
+        bottle_detections = [det for det in yolo_detections if det['class_id'] == 39 or det['class_id']==41]  # bottle类别ID
         
         if not bottle_detections:
             return  # 如果没有检测到水杯，则不进行喝水检测
@@ -97,16 +97,17 @@ class DrinkingDetector(BaseDetector):
         mouth_center_x = (mouth_left.x + mouth_right.x) / 2
         mouth_center_y = (mouth_top.y + mouth_bottom.y) / 2
         
-        # 检查是否有手靠近嘴部
-        hands_near_mouth = False
-        min_distance = float('inf')
-        
         if frame is not None:
             height, width = frame.shape[:2]
             mouth_center_px = (int(mouth_center_x * width), int(mouth_center_y * height))
             
             # 在视频画面中绘制嘴部中心点
             cv2.circle(frame, mouth_center_px, 5, (0, 255, 255), -1)  # 青色点表示嘴部中心
+        
+        # 检查是否有手靠近嘴部或者手握水杯
+        hands_near_mouth = False
+        min_distance = float('inf')
+        bottle_in_hand = False
         
         # 检查每只手是否靠近嘴部
         for hand_landmark in hand_landmarks:
@@ -123,33 +124,49 @@ class DrinkingDetector(BaseDetector):
                 wrist_px = (int(wrist.x * width), int(wrist.y * height))
                 thumb_tip_px = (int(thumb_tip.x * width), int(thumb_tip.y * height))
                 index_finger_tip_px = (int(index_finger_tip.x * width), int(index_finger_tip.y * height))
+                mouth_center_px = (int(mouth_center_x * width), int(mouth_center_y * height))
                 
                 # 计算距离
                 distance_thumb = np.sqrt((thumb_tip_px[0] - mouth_center_px[0])**2 + 
                                         (thumb_tip_px[1] - mouth_center_px[1])**2)
                 distance_index = np.sqrt((index_finger_tip_px[0] - mouth_center_px[0])**2 + 
                                         (index_finger_tip_px[1] - mouth_center_px[1])**2)
+                distance_wrist = np.sqrt((wrist_px[0] - mouth_center_px[0])**2 + 
+                                       (wrist_px[1] - mouth_center_px[1])**2)
                 
                 # 更新最小距离
-                min_distance = min(min_distance, distance_thumb, distance_index)
+                min_distance = min(min_distance, distance_thumb, distance_index, distance_wrist)
                 
                 # 绘制手部关键点
                 cv2.circle(frame, thumb_tip_px, 5, (255, 0, 0), -1)  # 蓝色点表示拇指
                 cv2.circle(frame, index_finger_tip_px, 5, (0, 255, 0), -1)  # 绿色点表示食指
+                cv2.circle(frame, wrist_px, 5, (0, 0, 255), -1)  # 红色点表示手腕
                 
                 # 如果距离小于阈值，则认为手在嘴部附近
                 # 阈值根据帧的尺寸动态调整
                 if frame is not None:
-                    threshold = min(height, width) * 0.1  # 10%的最小边长作为阈值
-                    if distance_thumb < threshold or distance_index < threshold:
+                    threshold = min(height, width) * 0.15  # 增加阈值到15%的最小边长
+                    if (distance_thumb < threshold or 
+                        distance_index < threshold or 
+                        distance_wrist < threshold):
                         hands_near_mouth = True
+            
+            # 检查手是否握着水杯（手腕在水杯边界框内）
+            if frame is not None:
+                height, width = frame.shape[:2]
+                wrist_x = int(wrist.x * width)
+                wrist_y = int(wrist.y * height)
+                
+                x1, y1, x2, y2 = bottle_bbox
+                if x1 <= wrist_x <= x2 and y1 <= wrist_y <= y2:
+                    bottle_in_hand = True
         
         # 判断是否在喝水
-        # 条件：检测到水杯 + 手在嘴部附近且距离在一定范围内
+        # 条件：检测到水杯 + (手在嘴部附近 或者 手握水杯)
         drinking_detected = False
         if frame is not None:
-            threshold = min(frame.shape[0], frame.shape[1]) * 0.1
-            if min_distance < threshold:
+            threshold = min(frame.shape[0], frame.shape[1]) * 0.15  # 使用相同的阈值
+            if min_distance < threshold or bottle_in_hand:
                 drinking_detected = True
         
         # 在视频画面中显示喝水检测信息
@@ -158,13 +175,17 @@ class DrinkingDetector(BaseDetector):
             x1, y1, x2, y2 = bottle_bbox
             cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)  # 青色框表示水杯
             
+            # 显示是否检测到手握水杯
+            cv2.putText(frame, f"Bottle in hand: {bottle_in_hand}", (10, 150), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+            
             if drinking_detected:
-                cv2.putText(frame, "DRINKING DETECTED", (10, 60), 
+                cv2.putText(frame, "DRINKING DETECTED", (10, 120), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                cv2.putText(frame, f"Distance: {min_distance:.1f}", (10, 90), 
+                cv2.putText(frame, f"Min distance: {min_distance:.1f}", (10, 90), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-                cv2.putText(frame, f"Bottle Confidence: {bottle_confidence:.2f}", (10, 120), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+                # cv2.putText(frame, f"Bottle Confidence: {bottle_confidence:.2f}", (10, 120), 
+                #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         
         # 如果检测到喝水行为，则添加事件
         if drinking_detected:
@@ -173,6 +194,11 @@ class DrinkingDetector(BaseDetector):
             overall_confidence = (bottle_confidence + hand_confidence) / 2
             overall_confidence = round(min(overall_confidence, 1.0), 2)
             
+            # 如果是手握水杯的情况，增加置信度
+            if bottle_in_hand:
+                overall_confidence = min(1.0, overall_confidence + 0.2)
+                overall_confidence = round(overall_confidence, 2)
+            
             event = BehaviorEvent(
                 event_type=WarningBehavior.EATING_DRINKING,
                 confidence=overall_confidence,
@@ -180,7 +206,8 @@ class DrinkingDetector(BaseDetector):
                 details={
                     'min_distance': round(float(min_distance), 1) if frame is not None else 0,
                     'bottle_confidence': round(float(bottle_confidence), 2),
-                    'hands_near_mouth': hands_near_mouth
+                    'hands_near_mouth': hands_near_mouth,
+                    'bottle_in_hand': bottle_in_hand
                 }
             )
             events.append(event)
