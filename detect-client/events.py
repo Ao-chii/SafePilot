@@ -27,6 +27,7 @@ class DangerousBehavior(Enum):
     GAZE_OFF_ROAD = 5        # 视线偏离道路
     SMOKING = 6              # 抽烟
     TURNING_AROUND = 7       # 转身与后排乘客交流
+    YAWNING = 8              # 打哈欠
 
 
 class WarningBehavior(Enum):
@@ -48,7 +49,9 @@ class EventTypeToString:
     """
     event_map={
         DangerousBehavior.PHONE_READING:"使用手机",
-        DangerousBehavior.SEVERE_DROWSINESS:"疲劳驾驶"
+        DangerousBehavior.SEVERE_DROWSINESS:"疲劳驾驶",
+        DangerousBehavior.YAWNING:"疲劳驾驶",
+        
     }
     def get_event_type_string(self,event_type):
         return self.event_map.get(event_type, "未知行为")

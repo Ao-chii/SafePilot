@@ -4,7 +4,8 @@ import threading
 import time
 import os
 from events import EventLevel, EventTypeToString
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+
 
 try:
     from playsound import playsound
@@ -83,7 +84,7 @@ class Reporter:
             event (BehaviorEvent): 行为事件
         """
         # 防频繁上报：同一种行为在指定时间间隔内只上报一次
-        behavior_key = event.type.name
+        behavior_key = f"{event.type.__class__.__name__}_{event.type.name}"
         current_time = time.time()
         
         if behavior_key in self.last_report_time:
@@ -98,12 +99,16 @@ class Reporter:
         # 创建 EventTypeToString 实例
         event_type_converter = EventTypeToString()
         
+        # 将UTC时间戳转换为北京时间
+        utc_time = datetime.fromtimestamp(event_dict["timestamp"], tz=timezone.utc)
+        beijing_time = utc_time + timedelta(hours=8)
+        
         # 构造符合服务器要求的事件数据
         server_event = {
             "driver_id": event_dict["driver_id"],
             "event_type": event_type_converter.get_event_type_string(event.type),  # 使用行为类型的名称作为事件类型
             "confidence": event_dict["confidence"],
-            "timestamp": datetime.utcfromtimestamp(event_dict["timestamp"]).isoformat()  # 转换为ISO格式
+            "timestamp": beijing_time.isoformat()  # 使用北京时间
         }
         
         # 如果有详细信息，则添加
@@ -150,7 +155,7 @@ class Reporter:
         打印事件到屏幕
         """
         # 防频繁打印：同一种行为在指定时间间隔内只打印一次
-        behavior_key = event.type.name
+        behavior_key = f"{event.type.__class__.__name__}_{event.type.name}"
         current_time = time.time()
         
         if behavior_key in self.last_report_time:
@@ -162,5 +167,8 @@ class Reporter:
         event_type_converter = EventTypeToString()
         event_type_string = event_type_converter.get_event_type_string(event.type)
         
-        print(f"{datetime.fromtimestamp(event.timestamp).isoformat()}: {event_type_string}")
+        # 将UTC时间戳转换为北京时间
+        utc_time = datetime.fromtimestamp(event.timestamp, tz=timezone.utc)
+        beijing_time = utc_time + timedelta(hours=8)
+        print(f"{beijing_time.isoformat()}: {event_type_string}")
         self.last_report_time[behavior_key] = current_time

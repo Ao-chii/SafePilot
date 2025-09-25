@@ -19,6 +19,9 @@ behavior_rules:
   perclos_threshold: 0.5
   gaze_off_road_threshold: 2.0
   hands_off_wheel_threshold: 3.0
+  yawn_threshold: 0.6
+  yawn_time_window: 3.0
+  yawn_ratio_threshold: 0.1
 
 server:
   api_endpoint: "http://localhost:5000/api/v1/events"
