@@ -16,11 +16,14 @@ import {
   Tooltip,
   Legend,
   Filler,
+  LineController,
   type ChartData,
   type ChartOptions
 } from 'chart.js'
 
+// 注册折线图控制器和其他必要组件
 ChartJS.register(
+  LineController,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -40,7 +43,7 @@ const props = defineProps<{
   data: LineChartData[]
   label?: string
   color?: string
-}>()
+}>();
 
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
 let chart: ChartJS | null = null

@@ -295,7 +295,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { event_api, driver_api, device_api } from '../../api'
 import MetricCard from '../../components/common/MetricCard.vue'
 import PieChart from '../../components/common/PieChart.vue'
@@ -377,6 +377,9 @@ const get_efficiency_color = (efficiency: number): string => {
 const load_statistics = async () => {
   loading.value = true
   try {
+    // 使用 setTimeout 让 UI 有机会更新 loading 状态
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
     await Promise.all([
       load_overview_stats(),
       load_event_type_distribution(),
@@ -393,6 +396,9 @@ const load_statistics = async () => {
 
 const load_overview_stats = async () => {
   try {
+    // 让出控制权给 UI 线程
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
     const params = {
       start_time: date_range.start ? date_range.start + 'T00:00:00' : undefined,
       end_time: date_range.end ? date_range.end + 'T23:59:59' : undefined,
@@ -414,6 +420,9 @@ const load_overview_stats = async () => {
 
 const load_event_type_distribution = async () => {
   try {
+    // 让出控制权给 UI 线程
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
     const params = {
       start_time: date_range.start ? date_range.start + 'T00:00:00' : undefined,
       end_time: date_range.end ? date_range.end + 'T23:59:59' : undefined,
@@ -442,6 +451,9 @@ const load_event_type_distribution = async () => {
 
 const load_time_trend = async () => {
   try {
+    // 让出控制权给 UI 线程
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
     const params = {
       start_time: date_range.start ? date_range.start + 'T00:00:00' : undefined,
       end_time: date_range.end ? date_range.end + 'T23:59:59' : undefined,
@@ -468,6 +480,9 @@ const load_time_trend = async () => {
 
 const load_driver_ranking = async () => {
   try {
+    // 让出控制权给 UI 线程
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
     const params = {
       start_time: date_range.start ? date_range.start + 'T00:00:00' : undefined,
       end_time: date_range.end ? date_range.end + 'T23:59:59' : undefined,
@@ -507,6 +522,9 @@ const load_driver_ranking = async () => {
 
 const load_device_efficiency = async () => {
   try {
+    // 让出控制权给 UI 线程
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
     const params = {
       start_time: date_range.start ? date_range.start + 'T00:00:00' : undefined,
       end_time: date_range.end ? date_range.end + 'T23:59:59' : undefined,
@@ -559,7 +577,10 @@ onMounted(() => {
   date_range.start = thirty_days_ago.toISOString().split('T')[0]
   date_range.end = today.toISOString().split('T')[0]
   
-  load_statistics()
+  // 使用 nextTick 确保 DOM 更新后再加载数据
+  nextTick(() => {
+    load_statistics()
+  })
 })
 </script>
 
