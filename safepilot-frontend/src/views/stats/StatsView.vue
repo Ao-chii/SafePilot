@@ -494,7 +494,7 @@ const load_driver_ranking = async () => {
     ])
     
     const events = events_response.data.events || []
-    const drivers = drivers_response.data.drivers || []
+    const drivers = drivers_response.data || []
     
     // 统计每个驾驶员的事件数
     const driverEventCount = events.reduce((acc: any, event: any) => {

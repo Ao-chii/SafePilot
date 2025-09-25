@@ -265,8 +265,8 @@ const total_pages = computed(() =>
 
 // 获取事件状态
 const get_event_status = (event_type: string): 'normal' | 'warning' | 'danger' => {
-  const danger_events = ['疲劳驾驶', '分心驾驶']
-  const warning_events = ['打哈欠', '闭眼', '使用手机', '抽烟']
+  const danger_events = ['疲劳驾驶', '危险行为']
+  const warning_events = ['打哈欠', '闭眼', '使用手机', '抽烟','饮食']
   
   if (danger_events.includes(event_type)) {
     return 'danger'

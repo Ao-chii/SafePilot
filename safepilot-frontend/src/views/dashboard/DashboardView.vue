@@ -277,8 +277,8 @@ const key_metrics = computed(() => [
 
 // 获取事件状态
 const get_event_status = (event_type: string): 'normal' | 'warning' | 'danger' => {
-  const danger_events = ['疲劳驾驶', '分心驾驶', '危险行为']
-  const warning_events = ['打哈欠', '闭眼']
+  const danger_events = ['疲劳驾驶','危险行为']
+  const warning_events = ['打哈欠', '闭眼','使用手机', '抽烟','饮食']
   
   if (danger_events.some(type => event_type.includes(type))) {
     return 'danger'
@@ -335,12 +335,12 @@ const load_data = async () => {
     
     recent_events.value = events_response.data.events || []
     
-    const devices = devices_response.data.devices || []
+    const devices = devices_response.data || []
     system_status.value.devices.total = devices.length
     system_status.value.devices.online = devices.filter((d: any) => d.is_active).length
     system_status.value.devices.offline = devices.length - system_status.value.devices.online
     
-    const drivers = drivers_response.data.drivers || []
+    const drivers = drivers_response.data || []
     system_status.value.drivers.active = drivers.filter((d: any) => d.is_active).length
     
     // 根据事件数据计算高风险驾驶员
