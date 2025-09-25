@@ -122,13 +122,13 @@ class PhoneUsageDetector(BaseDetector):
             if phone_usage_detected:
                 cv2.putText(frame, "PHONE USAGE DETECTED", (x1, y1 - 30), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                cv2.putText(frame, f"Confidence: {phone_confidence:.2f}", (x1, y1 - 10), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                # cv2.putText(frame, f"Confidence: {phone_confidence:.2f}", (x1, y1 - 10), 
+                #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
             else:
                 cv2.putText(frame, "PHONE DETECTED", (x1, y1 - 30), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-                cv2.putText(frame, f"Confidence: {phone_confidence:.2f}", (x1, y1 - 10), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                # cv2.putText(frame, f"Confidence: {phone_confidence:.2f}", (x1, y1 - 10), 
+                #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
         
         # 如果检测到手机使用行为，则添加事件
         if phone_usage_detected:

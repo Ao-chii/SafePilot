@@ -97,3 +97,6 @@ yarn-error.log
 .specstory/
 .cursorindexingignore
 .qoder/
+
+# Detect Client
+detect-client/test/

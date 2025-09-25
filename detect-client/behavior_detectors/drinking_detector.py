@@ -182,8 +182,8 @@ class DrinkingDetector(BaseDetector):
             if drinking_detected:
                 cv2.putText(frame, "DRINKING DETECTED", (10, 120), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                cv2.putText(frame, f"Min distance: {min_distance:.1f}", (10, 90), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                # cv2.putText(frame, f"Min distance: {min_distance:.1f}", (10, 90), 
+                #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
                 # cv2.putText(frame, f"Bottle Confidence: {bottle_confidence:.2f}", (10, 120), 
                 #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         
