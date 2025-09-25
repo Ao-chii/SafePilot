@@ -1,0 +1,27 @@
+camera:
+  source: 0
+  width: 640
+  height: 480
+
+yolo:
+  model_path: "yolo11n.pt"
+  confidence_threshold: 0.5
+  classes_to_detect: [0, 67, 77]  # 0: person, 67: cell phone, 77: bottle
+
+mediapipe:
+  static_image_mode: False
+  max_num_faces: 1
+  min_detection_confidence: 0.5
+
+behavior_rules:
+  eyes_close_threshold: 0.15
+  perclos_time_window: 3.0
+  perclos_threshold: 0.5
+  gaze_off_road_threshold: 2.0
+  hands_off_wheel_threshold: 3.0
+
+server:
+  api_endpoint: "http://localhost:5000/api/v1/events"
+  api_key: "your-api-key-here"
+  timeout_seconds: 5
+  report_interval: 60  # 同一种行为60秒内只上报一次
