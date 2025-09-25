@@ -872,18 +872,18 @@ const format_recording_time = (): string => {
 
 // 增强视频播放器相关方法
 const get_stream_config = (stream: VideoStream): VideoStreamConfig => {
-  // 根据stream数据生成VideoStreamConfig
-  let stream_type: VideoStreamConfig['type'] = 'file'
+  // 对于模拟数据，直接使用webcam类型避免文件加载问题
+  let stream_type: VideoStreamConfig['type'] = 'webcam'
   
   // 根据设备名称判断类型
-  if (stream.device_name.includes('摄像头') || stream.device_name.includes('webcam')) {
-    stream_type = 'webcam'
-  } else if (stream.stream_url?.includes('webrtc')) {
+  if (stream.stream_url?.includes('webrtc')) {
     stream_type = 'webrtc'
   } else if (stream.stream_url?.includes('.m3u8')) {
     stream_type = 'hls'
   } else if (stream.stream_url?.includes('rtmp')) {
     stream_type = 'rtmp'
+  } else if (stream.stream_url && stream.stream_url.startsWith('http')) {
+    stream_type = 'file'
   }
 
   return {
@@ -1131,16 +1131,15 @@ onUnmounted(() => {
 
 <style scoped>
 .monitor-view {
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   background: linear-gradient(135deg, #1a1d29 0%, #2d3142 100%);
 }
 
 .monitor-header {
   padding: 16px 24px;
   background: rgba(37, 40, 65, 0.9);
-  backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(231, 209, 187, 0.1);
 }
 
@@ -1159,7 +1158,7 @@ onUnmounted(() => {
 
 /* 视频网格样式 */
 .video-grid-container {
-  background: rgba(37, 40, 65, 0.8);
+  background: transparent;
   border: 1px solid rgba(231, 209, 187, 0.15);
 }
 
@@ -1249,11 +1248,10 @@ onUnmounted(() => {
 .video-info {
   position: absolute;
   padding: 8px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 6px;
   color: white;
   font-size: 12px;
-  backdrop-filter: blur(4px);
 }
 
 .video-info.top-left { top: 8px; left: 8px; }
@@ -1375,10 +1373,24 @@ onUnmounted(() => {
 
 /* 统一配色方案 */
 :deep(.v-card) {
-  backdrop-filter: blur(16px);
   background: linear-gradient(135deg, rgba(37, 40, 65, 0.8), rgba(61, 63, 91, 0.6)) !important;
   border: 1px solid rgba(231, 209, 187, 0.15);
   color: #A096A2;
+}
+
+/* 只对非视频区域的卡片应用模糊效果 */
+:deep(.alert-panel),
+:deep(.status-card) {
+  backdrop-filter: blur(16px);
+}
+
+/* 确保视频播放区域完全清晰 */
+.video-grid-container,
+.video-grid,
+.video-item,
+.video-player,
+.enhanced-video-player {
+  backdrop-filter: none !important;
 }
 
 :deep(.v-btn) {
@@ -1467,8 +1479,7 @@ onUnmounted(() => {
 }
 
 .info-card, .ai-analysis-card, .recording-indicator {
-  background: rgba(37, 40, 65, 0.9) !important;
-  backdrop-filter: blur(16px);
+  background: rgba(37, 40, 65, 0.95) !important;
   border: 1px solid rgba(231, 209, 187, 0.2);
   color: #A096A2;
   min-width: 250px;
