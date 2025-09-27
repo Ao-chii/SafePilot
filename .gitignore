@@ -97,3 +97,5 @@ yarn-error.log
 .specstory/
 .cursorindexingignore
 .qoder/
+datasets/
+train.py
