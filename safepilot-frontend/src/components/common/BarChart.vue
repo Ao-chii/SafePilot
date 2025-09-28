@@ -14,11 +14,13 @@ import {
   Title,
   Tooltip,
   Legend,
+  BarController,
   type ChartData,
   type ChartOptions
 } from 'chart.js'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+// 注册柱状图控制器和其他必要组件
+ChartJS.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 interface BarChartData {
   label: string

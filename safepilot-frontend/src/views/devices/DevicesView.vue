@@ -944,6 +944,7 @@ const save_device = async () => {
         device_id: device_form.device_id,
         name: device_form.name,
         description: device_form.description,
+        is_active: device_form.is_active,
       })
     }
     

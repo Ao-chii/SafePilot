@@ -168,42 +168,62 @@
     </v-card>
 
     <!-- 事件详情对话框 -->
-    <v-dialog v-model="detail_dialog" max-width="600">
+    <v-dialog v-model="detail_dialog" max-width="800">
       <v-card v-if="selected_event">
         <v-card-title>事件详情</v-card-title>
         <v-card-text>
-          <v-list density="compact">
-            <v-list-item>
-              <v-list-item-title>事件ID</v-list-item-title>
-              <v-list-item-subtitle>{{ selected_event.id }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>事件类型</v-list-item-title>
-              <v-list-item-subtitle>
-                <StatusChip
-                  :status="get_event_status(selected_event.event_type)"
-                  :text="selected_event.event_type"
-                  size="small"
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-list density="compact">
+                <v-list-item>
+                  <v-list-item-title>事件ID</v-list-item-title>
+                  <v-list-item-subtitle>{{ selected_event.id }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>事件类型</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <StatusChip
+                      :status="get_event_status(selected_event.event_type)"
+                      :text="selected_event.event_type"
+                      size="small"
+                    />
+                  </v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>驾驶员</v-list-item-title>
+                  <v-list-item-subtitle>{{ selected_event.driver_id }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>设备</v-list-item-title>
+                  <v-list-item-subtitle>{{ selected_event.device_id }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>置信度</v-list-item-title>
+                  <v-list-item-subtitle>{{ Math.round(selected_event.confidence * 100) }}%</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>发生时间</v-list-item-title>
+                  <v-list-item-subtitle>{{ format_datetime(selected_event.timestamp) }}</v-list-item-subtitle>
+                </v-list-item>
+              </v-list>
+            </v-col>
+            <v-col cols="12" md="6">
+              <div v-if="selected_event.image">
+                <h3 class="text-subtitle-1 font-weight-medium mb-2">行为快照</h3>
+                <v-img
+                  :src="`data:image/jpeg;base64,${selected_event.image}`"
+                  alt="行为快照"
+                  max-height="300"
+                  contain
+                  class="rounded-lg border"
                 />
-              </v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>驾驶员</v-list-item-title>
-              <v-list-item-subtitle>{{ selected_event.driver_id }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>设备</v-list-item-title>
-              <v-list-item-subtitle>{{ selected_event.device_id }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>置信度</v-list-item-title>
-              <v-list-item-subtitle>{{ Math.round(selected_event.confidence * 100) }}%</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>发生时间</v-list-item-title>
-              <v-list-item-subtitle>{{ format_datetime(selected_event.timestamp) }}</v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
+              </div>
+              <div v-else class="text-center text-grey-darken-1 mt-10">
+                <v-icon size="48">mdi-image-off-outline</v-icon>
+                <p class="mt-2">无可用快照</p>
+              </div>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -239,12 +259,12 @@ const filter = reactive({
 // 事件类型选项
 const event_type_options = [
   '疲劳驾驶',
-  '分心驾驶',
-  '闭眼',
-  '打哈欠',
+  '危险行为',
+  // '闭眼',
+  // '打哈欠',
   '使用手机',
   '抽烟',
-  '未系安全带',
+  '饮食',
 ]
 
 // 表格列定义
@@ -265,8 +285,8 @@ const total_pages = computed(() =>
 
 // 获取事件状态
 const get_event_status = (event_type: string): 'normal' | 'warning' | 'danger' => {
-  const danger_events = ['疲劳驾驶', '分心驾驶']
-  const warning_events = ['打哈欠', '闭眼', '使用手机', '抽烟']
+  const danger_events = ['疲劳驾驶', '危险行为']
+  const warning_events = ['打哈欠', '闭眼', '使用手机', '抽烟','饮食']
   
   if (danger_events.includes(event_type)) {
     return 'danger'

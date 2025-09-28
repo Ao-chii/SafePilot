@@ -11,11 +11,13 @@ import {
   ArcElement,
   Tooltip,
   Legend,
+  PieController,
   type ChartData,
   type ChartOptions
 } from 'chart.js'
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+// 注册饼图控制器和其他必要组件
+ChartJS.register(PieController, ArcElement, Tooltip, Legend)
 
 interface PieChartData {
   type: string

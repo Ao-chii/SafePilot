@@ -85,6 +85,7 @@ export const device_api = {
         device_id: string
         name: string
         description?: string
+        is_active?: boolean
     }) =>
         api_client.post('/devices', data),
     
@@ -115,6 +116,7 @@ export const driver_api = {
     create_driver: (data: {
         driver_id: string
         name: string
+        is_active?: boolean
     }) =>
         api_client.post('/drivers', data),
     
