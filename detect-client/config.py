@@ -53,6 +53,10 @@ class Config:
         """获取YOLO配置"""
         return self._config.get('yolo', {})
     
+    def get_self_yolo_config(self):
+        """获取自己训练的YOLO配置"""
+        return self._config.get('self_yolo', {})
+
     def get_mediapipe_config(self):
         """获取MediaPipe配置"""
         return self._config.get('mediapipe', {})

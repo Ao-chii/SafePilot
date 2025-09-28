@@ -9,6 +9,11 @@ yolo:
   confidence_threshold: 0.5
   classes_to_detect: [0, 67, 39, 41]  # 0: person, 67: cell phone, 39: bottle, 41: cup
 
+self_yolo:
+  model_path: "best.pt"
+  confidence_threshold: 0.5
+  classes_to_detect: [1, 4]  # 1: drinking  4: phone usage
+
 mediapipe:
   static_image_mode: False
   max_num_faces: 1

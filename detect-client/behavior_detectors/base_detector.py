@@ -22,7 +22,7 @@ class BaseDetector(ABC):
         self.behavior_rules = config.get_behavior_rules_config()
     
     @abstractmethod
-    def detect(self, yolo_detections, mediapipe_results, frame=None):
+    def detect(self, yolo_detections, mediapipe_results=None, frame=None):
         """
         检测行为
         
@@ -35,3 +35,15 @@ class BaseDetector(ABC):
             list: 检测到的行为事件列表
         """
         pass
+    
+    def is_instance_of(self, cls):
+        """
+        检查当前实例是否为指定类的实例
+        
+        Args:
+            cls: 要检查的类
+            
+        Returns:
+            bool: 如果是该类的实例则返回True，否则返回False
+        """
+        return isinstance(self, cls)

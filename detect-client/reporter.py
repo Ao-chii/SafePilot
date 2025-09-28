@@ -5,7 +5,7 @@ import time
 import os
 import cv2
 import base64
-from events import EventLevel, EventTypeToString
+from events import EventLevel, EventTypeToString, WarningBehavior, DangerousBehavior
 from datetime import datetime, timedelta, timezone
 
 
@@ -44,7 +44,7 @@ class Reporter:
         # 添加音频播放状态跟踪
         self.is_playing_alarm = False
     
-    def handle_events(self, events, frame):
+    def handle_events(self, events, frame, self_frame):
         """
         处理事件列表
         
@@ -60,7 +60,11 @@ class Reporter:
                 threading.Thread(target=self._play_alarm, daemon=True).start()
                 
             # 2. 上报服务器（在非阻塞线程中）
-            threading.Thread(target=self._report_to_server, args=(event, frame), daemon=True).start()
+            if event.type==WarningBehavior.EATING_DRINKING or event.type==DangerousBehavior.PHONE_READING:
+                threading.Thread(target=self._report_to_server, args=(event, self_frame), daemon=True).start()
+            else:
+                threading.Thread(target=self._report_to_server, args=(event, frame), daemon=True).start()
+            
             self._print_to_screen(event)
 
     def _play_alarm(self):
