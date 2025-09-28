@@ -49,7 +49,7 @@ class DrinkingDetector(BaseDetector):
             frame: 视频帧（可选，用于显示检测信息）
         """
         # 检查是否检测到喝水行为 (class_id=1 根据配置文件)
-        drinking_detections = [det for det in self_yolo_detections if det['class_id'] == 1]
+        drinking_detections = [det for det in self_yolo_detections if det['class_id'] == 1 or det['class_id'] == 3]
         
         if not drinking_detections:
             return  # 如果没有检测到喝水行为，则直接返回

@@ -52,6 +52,7 @@ class EventTypeToString:
         DangerousBehavior.PHONE_READING:"使用手机",
         DangerousBehavior.SEVERE_DROWSINESS:"疲劳驾驶",
         DangerousBehavior.YAWNING:"疲劳驾驶",
+        DangerousBehavior.GAZE_OFF_ROAD:"视线偏离道路",
         WarningBehavior.EATING_DRINKING:"饮食",
         
     }

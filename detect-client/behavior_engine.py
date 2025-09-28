@@ -3,7 +3,7 @@
 """
 
 from config import Config
-from behavior_detectors import DrowsinessDetector, PhoneUsageDetector, HandsOffWheelDetector, YawningDetector, DrinkingDetector
+from behavior_detectors import DrowsinessDetector, PhoneUsageDetector, HandsOffWheelDetector, YawningDetector, DrinkingDetector, DistractedDetector
 
 
 class BehaviorEngine:
@@ -27,7 +27,8 @@ class BehaviorEngine:
             PhoneUsageDetector(config),
             # HandsOffWheelDetector(config),
             YawningDetector(config),
-            DrinkingDetector(config)
+            DrinkingDetector(config),
+            DistractedDetector(config)
         ]
     
     def process(self, yolo_detections, self_yolo_detections, mediapipe_results, frame, self_frame):
