@@ -100,3 +100,6 @@ yarn-error.log
 
 # Detect Client
 detect-client/test/
+=======
+datasets/
+train.py
