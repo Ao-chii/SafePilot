@@ -12,7 +12,7 @@ yolo:
 self_yolo:
   model_path: "best.pt"
   confidence_threshold: 0.5
-  classes_to_detect: [1, 4]  # 1: drinking  4: phone usage
+  classes_to_detect: [1, 3, 4]  # 1: drinking  3: eating  4: phone usage
 
 mediapipe:
   static_image_mode: False
