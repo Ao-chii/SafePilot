@@ -17,6 +17,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from config import Config
 from frame_capture import FrameCapture
 from detector_yolo import YOLODetector
+from detector_yolo_self_trained import SelfYOLODetector
 from analyzer_mediapipe import MediaPipeAnalyzer
 from behavior_engine import BehaviorEngine
 from reporter import Reporter
@@ -44,6 +45,13 @@ def main():
             yolo_config.get('model_path', 'yolo11n.pt'),
             yolo_config.get('confidence_threshold', 0.5),
             yolo_config.get('classes_to_detect')
+        )
+
+        self_yolo_config = config.get_self_yolo_config()
+        self_yolo_detector = SelfYOLODetector(
+            self_yolo_config.get('model_path', 'best.pt'),
+            self_yolo_config.get('confidence_threshold', 0.5),
+            self_yolo_config.get('classes_to_detect')
         )
         print("YOLO检测器初始化成功")
         
@@ -73,16 +81,17 @@ def main():
             
             # YOLO检测
             yolo_detections, annotated_frame = yolo_detector.detect(frame)
-            
+            self_detections, self_annotated_frame = self_yolo_detector.detect(frame)
+
             # MediaPipe分析
             mp_results = mp_analyzer.analyze(frame)
             
             # 行为判断（传递frame参数以在视频中显示疲劳信息）
-            events = behavior_engine.process(yolo_detections, mp_results, annotated_frame)
+            events = behavior_engine.process(yolo_detections, self_detections, mp_results, annotated_frame, self_annotated_frame)
             
             # 处理事件（报警和上报）
             if events:
-                reporter.handle_events(events, annotated_frame)
+                reporter.handle_events(events, annotated_frame, self_annotated_frame)
             
             # 显示结果（可选）
             cv2.imshow('Driver Monitoring', annotated_frame)

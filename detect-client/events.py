@@ -106,6 +106,8 @@ class BehaviorEvent:
                 return {key: convert_to_serializable(value) for key, value in obj.items()}
             elif hasattr(obj, 'item'):  # numpy标量
                 return obj.item()
+            elif isinstance(obj, np.ndarray):  # numpy数组
+                return obj.tolist()
             elif isinstance(obj, (int, float, str, bool)) or obj is None:
                 return obj
             else:
@@ -114,8 +116,8 @@ class BehaviorEvent:
         details_serializable = convert_to_serializable(self.details)
         
         return {
-            "driver_id": self.driver_id,
-            "confidence": self.confidence,
-            "timestamp": self.timestamp,
+            "driver_id": int(self.driver_id),  # 确保driver_id是原生Python类型
+            "confidence": float(self.confidence),  # 确保confidence是原生Python类型
+            "timestamp": float(self.timestamp),  # 确保timestamp是原生Python类型
             "details": details_serializable
         }
