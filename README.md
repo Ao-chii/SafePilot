@@ -1,6 +1,6 @@
 <div align="center">
   <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin: 20px 0;">
-    <img src="figures/logo.png" alt="SafePilot Logo" width="90" height="90" style="flex-shrink: 0;">
+    <img src="image/logo.png" alt="SafePilot Logo" width="90" height="90" style="flex-shrink: 0;">
     <div style="text-align: left;">
       <h1 style="margin: 0; padding: 0;">SafePilot：驾驶员危险行为检测系统</h1>
       <p style="margin: 5px 0 0 0; padding: 0; color: #666;">基于YOLOv11和MediaPipe的智能驾驶安全监控系统</p>
@@ -13,24 +13,26 @@ SafePilot是一个基于计算机视觉的实时驾驶员危险行为检测系�
 ## 系统架构
 
 系统采用复合架构风格：
+
 - **三层架构**：表现层、逻辑层和数据层清晰分离
 - **客户端-服务器架构**：胖客户端进行实时检测，服务器进行数据管理和分析
 
 ### 核心组件
 
 1. **客户端** (`client/`)：
+
    - 实时视频流采集和处理
    - 基于YOLOv11和MediaPipe的行为检测
    - 本地声光报警
    - 事件数据上报
-
 2. **服务器** (`server/`)：
+
    - Flask API服务
    - 数据访问层（DAO模式）
    - 用户和设备管理
    - 事件数据存储和统计分析
-
 3. **前端** (`frontend/`)：
+
    - 基于Vue.js的管理界面
    - 实时数据展示
    - 历史数据查询和分析
@@ -67,9 +69,10 @@ pip install -r server_requirements.txt
 ### 配置
 
 1. 客户端配置：
-   - 编辑 `config.json` 配置服务器地址、设备ID等
 
+   - 编辑 `config.json` 配置服务器地址、设备ID等
 2. 服务器配置：
+
    - 编辑 `server_config.json` 配置数据库连接、API参数等
 
 ## 使用说明
@@ -114,16 +117,17 @@ python run_server.py --init-db
 系统可以检测以下驾驶员行为：
 
 1. **疲劳状态**：
+
    - 闭眼（实时跟踪眼睛状态）
    - 打哈欠（检测口部开合度）
    - 基于PERCLOS模型的疲劳评估
-
 2. **分心行为**：
+
    - 使用手机
    - 抽烟
    - 喝水
-
 3. **注意力跟踪**：
+
    - 视线跟踪
    - 头部姿态分析
 
@@ -141,7 +145,7 @@ python run_server.py --init-db
 
 ## 系统截图
 
-[这里放置系统运行截图]
+![1766720283442](image/README/1766720283442.png)
 
 ## 许可证
 
